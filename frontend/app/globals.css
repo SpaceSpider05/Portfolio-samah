@@ -1,0 +1,395 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Brand scales: Fantasy, Rose, Vanilla Ice, Silver Sand, Tobago */
+:root {
+  --fantasy-50: #fdfcfa;
+  --fantasy-100: #faf7f3;
+  --fantasy-200: #f7f3ed;
+  --fantasy-300: #efe8de;
+  --fantasy-400: #e4d9c9;
+  --fantasy-500: #d4c4ae;
+  --fantasy-600: #bba790;
+  --fantasy-700: #96836d;
+  --fantasy-800: #6f6151;
+  --fantasy-900: #4a4036;
+
+  --rose-50: #fbf6f6;
+  --rose-100: #f5e8e8;
+  --rose-200: #ecd3d4;
+  --rose-300: #e0b8b9;
+  --rose-400: #dba1a2;
+  --rose-500: #c98486;
+  --rose-600: #b06669;
+  --rose-700: #8f4f52;
+  --rose-800: #6d3c3e;
+  --rose-900: #4a292a;
+
+  --vanilla-50: #fdf9f8;
+  --vanilla-100: #f9efed;
+  --vanilla-200: #efd8d6;
+  --vanilla-300: #e4c0bd;
+  --vanilla-400: #d5a5a1;
+  --vanilla-500: #bf8681;
+  --vanilla-600: #a36b67;
+  --vanilla-700: #825450;
+  --vanilla-800: #5f3e3b;
+  --vanilla-900: #3f2927;
+
+  --silver-50: #f7f8f5;
+  --silver-100: #eef0ea;
+  --silver-200: #dfe3d8;
+  --silver-300: #c2c6b9;
+  --silver-400: #a8aea0;
+  --silver-500: #8c9383;
+  --silver-600: #717769;
+  --silver-700: #585e52;
+  --silver-800: #40443c;
+  --silver-900: #2a2d28;
+
+  --tobago-50: #f4efed;
+  --tobago-100: #e4d7d1;
+  --tobago-200: #c9b0a5;
+  --tobago-300: #a88878;
+  --tobago-400: #866353;
+  --tobago-500: #68493c;
+  --tobago-600: #52392f;
+  --tobago-700: #422b23;
+  --tobago-800: #2f1e19;
+  --tobago-900: #1c120f;
+
+  /* Site-wide base: Tobago. Light surfaces are tonal variants for depth only. */
+  --background: var(--tobago-700);
+  --background-deep: var(--tobago-800);
+  --background-elevated: var(--tobago-600);
+  --foreground: var(--fantasy-200);
+  --heading: var(--fantasy-200);
+  --heading-soft: var(--vanilla-200);
+  --surface: color-mix(in oklab, var(--tobago-600) 88%, var(--vanilla-200) 12%);
+  --surface-muted: var(--tobago-600);
+  --accent: var(--rose-400);
+  --accent-foreground: var(--tobago-900);
+  --muted: var(--silver-300);
+  --border: color-mix(in oklab, var(--silver-400) 28%, transparent);
+  --ring: var(--rose-400);
+  --card: color-mix(in oklab, var(--tobago-600) 72%, transparent);
+  --dark-base: var(--tobago-700);
+
+  --font-display: var(--font-edu-hand);
+  --font-sans: var(--font-outfit);
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+}
+
+/* Light mode — used by Admin Dark Mode toggle (Fantasy surfaces) */
+.light {
+  --background: var(--fantasy-200);
+  --background-deep: var(--fantasy-300);
+  --background-elevated: var(--fantasy-50);
+  --foreground: var(--tobago-700);
+  --heading: var(--tobago-800);
+  --heading-soft: var(--tobago-600);
+  --surface: var(--vanilla-100);
+  --surface-muted: var(--silver-200);
+  --accent: var(--rose-400);
+  --accent-foreground: var(--tobago-900);
+  --muted: var(--silver-600);
+  --border: color-mix(in oklab, var(--silver-400) 55%, transparent);
+  --card: color-mix(in oklab, white 78%, transparent);
+  --dark-base: var(--tobago-700);
+}
+
+.dark {
+  --background: var(--tobago-700);
+  --background-deep: var(--tobago-800);
+  --background-elevated: var(--tobago-600);
+  --foreground: var(--fantasy-200);
+  --heading: var(--fantasy-200);
+  --heading-soft: var(--vanilla-200);
+  --surface: color-mix(in oklab, var(--tobago-600) 88%, var(--vanilla-200) 12%);
+  --surface-muted: var(--tobago-600);
+  --accent: var(--rose-400);
+  --accent-foreground: var(--tobago-900);
+  --muted: var(--silver-300);
+  --border: color-mix(in oklab, var(--silver-400) 28%, transparent);
+  --card: color-mix(in oklab, var(--tobago-600) 72%, transparent);
+  --dark-base: var(--tobago-700);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-deep: var(--background-deep);
+  --color-background-elevated: var(--background-elevated);
+  --color-foreground: var(--foreground);
+  --color-heading: var(--heading);
+  --color-heading-soft: var(--heading-soft);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-dark-base: var(--dark-base);
+
+  --color-fantasy-50: var(--fantasy-50);
+  --color-fantasy-100: var(--fantasy-100);
+  --color-fantasy-200: var(--fantasy-200);
+  --color-fantasy-300: var(--fantasy-300);
+  --color-fantasy-400: var(--fantasy-400);
+  --color-fantasy-500: var(--fantasy-500);
+  --color-fantasy-600: var(--fantasy-600);
+  --color-fantasy-700: var(--fantasy-700);
+  --color-fantasy-800: var(--fantasy-800);
+  --color-fantasy-900: var(--fantasy-900);
+
+  --color-rose-50: var(--rose-50);
+  --color-rose-100: var(--rose-100);
+  --color-rose-200: var(--rose-200);
+  --color-rose-300: var(--rose-300);
+  --color-rose-400: var(--rose-400);
+  --color-rose-500: var(--rose-500);
+  --color-rose-600: var(--rose-600);
+  --color-rose-700: var(--rose-700);
+  --color-rose-800: var(--rose-800);
+  --color-rose-900: var(--rose-900);
+
+  --color-vanilla-50: var(--vanilla-50);
+  --color-vanilla-100: var(--vanilla-100);
+  --color-vanilla-200: var(--vanilla-200);
+  --color-vanilla-300: var(--vanilla-300);
+  --color-vanilla-400: var(--vanilla-400);
+  --color-vanilla-500: var(--vanilla-500);
+  --color-vanilla-600: var(--vanilla-600);
+  --color-vanilla-700: var(--vanilla-700);
+  --color-vanilla-800: var(--vanilla-800);
+  --color-vanilla-900: var(--vanilla-900);
+
+  --color-silver-50: var(--silver-50);
+  --color-silver-100: var(--silver-100);
+  --color-silver-200: var(--silver-200);
+  --color-silver-300: var(--silver-300);
+  --color-silver-400: var(--silver-400);
+  --color-silver-500: var(--silver-500);
+  --color-silver-600: var(--silver-600);
+  --color-silver-700: var(--silver-700);
+  --color-silver-800: var(--silver-800);
+  --color-silver-900: var(--silver-900);
+
+  --color-tobago-50: var(--tobago-50);
+  --color-tobago-100: var(--tobago-100);
+  --color-tobago-200: var(--tobago-200);
+  --color-tobago-300: var(--tobago-300);
+  --color-tobago-400: var(--tobago-400);
+  --color-tobago-500: var(--tobago-500);
+  --color-tobago-600: var(--tobago-600);
+  --color-tobago-700: var(--tobago-700);
+  --color-tobago-800: var(--tobago-800);
+  --color-tobago-900: var(--tobago-900);
+
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-edu-hand), ui-rounded, cursive;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Headings ONLY use Edu Hand. Never apply to body copy. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  /*
+   * CONTRAST RULE (mandatory):
+   * On Tobago base, heading text must be Fantasy / Vanilla Ice / white.
+   * Never Tobago, Rose-dark, or other low-contrast tones on headings.
+   */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .type-display,
+  .type-h1,
+  .type-h2,
+  .type-h3 {
+    color: var(--heading);
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--rose-400) 55%, transparent);
+    color: var(--fantasy-100);
+  }
+
+  .cursor-none-desktop {
+    cursor: none;
+  }
+
+  @media (pointer: fine) {
+    .cursor-none-desktop:not(.modal-open),
+    .cursor-none-desktop:not(.modal-open) * {
+      cursor: none !important;
+    }
+  }
+
+  html.modal-open,
+  body.modal-open {
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  .type-display {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--heading);
+  }
+
+  .type-h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 3.75rem);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--heading);
+  }
+
+  .type-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--heading);
+  }
+
+  .type-h3 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--heading);
+  }
+
+  .type-subheading {
+    font-family: var(--font-sans);
+    font-size: clamp(1.125rem, 2vw, 1.35rem);
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--vanilla-200);
+  }
+
+  .type-body {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--foreground);
+  }
+
+  .type-caption {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+
+  .type-overline {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rose-400);
+  }
+
+  .glass-panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow:
+      0 1px 0 color-mix(in oklab, var(--fantasy-200) 8%, transparent) inset,
+      0 20px 50px color-mix(in oklab, var(--tobago-900) 35%, transparent);
+  }
+
+  .aurora-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .aurora-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(60px);
+    opacity: 0.35;
+    animation: aurora-float 18s ease-in-out infinite;
+  }
+
+  .noise-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: soft-light;
+  }
+
+  .section-pad {
+    padding-block: clamp(4.5rem, 10vw, 8rem);
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+  }
+
+  .section-alt {
+    background: color-mix(in oklab, var(--tobago-800) 55%, transparent);
+  }
+}
+
+@keyframes aurora-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(4%, -6%, 0) scale(1.08);
+  }
+  66% {
+    transform: translate3d(-5%, 4%, 0) scale(0.95);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob {
+    animation: none;
+  }
+}

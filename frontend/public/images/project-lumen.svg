@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000" fill="none">
+  <rect width="800" height="1000" fill="#422B23"/>
+  <rect x="60" y="80" width="680" height="420" rx="28" fill="#F7F3ED"/>
+  <rect x="100" y="140" width="280" height="24" rx="12" fill="#DBA1A2"/>
+  <rect x="100" y="190" width="420" height="16" rx="8" fill="#C2C6B9"/>
+  <rect x="100" y="230" width="360" height="16" rx="8" fill="#C2C6B9"/>
+  <rect x="60" y="560" width="210" height="280" rx="24" fill="#DBA1A2"/>
+  <rect x="295" y="560" width="210" height="280" rx="24" fill="#EFD8D6"/>
+  <rect x="530" y="560" width="210" height="280" rx="24" fill="#C2C6B9"/>
+  <text x="80" y="920" fill="#F7F3ED" font-family="Georgia, serif" font-size="42">Lumen Retail</text>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000" fill="none">
+  <rect width="800" height="1000" fill="#EFD8D6"/>
+  <rect x="70" y="120" width="300" height="300" rx="28" fill="#DBA1A2"/>
+  <rect x="430" y="120" width="300" height="140" rx="28" fill="#422B23"/>
+  <rect x="430" y="280" width="300" height="140" rx="28" fill="#C2C6B9"/>
+  <rect x="70" y="460" width="660" height="280" rx="28" fill="#F7F3ED"/>
+  <text x="80" y="920" fill="#422B23" font-family="Georgia, serif" font-size="42">Atelier Social</text>
+</svg>
