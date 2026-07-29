@@ -77,7 +77,7 @@ export const MagneticButton = forwardRef<HTMLButtonElement, MagneticButtonProps>
       <button
         ref={assignRef}
         className={cn(
-          "relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-[box-shadow,background-color,color] duration-300 will-change-transform",
+          "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-[box-shadow,background-color,color,transform] duration-300 will-change-transform active:scale-[0.97]",
           variant === "primary" &&
             "bg-rose-400 text-tobago-800 shadow-[0_10px_30px_color-mix(in_oklab,var(--rose-400)_35%,transparent)] hover:bg-rose-500",
           variant === "secondary" &&
@@ -91,7 +91,7 @@ export const MagneticButton = forwardRef<HTMLButtonElement, MagneticButtonProps>
         onMouseEnter={handleEnter}
         {...props}
       >
-        <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-active:opacity-100" />
+        <span className="pointer-events-none absolute inset-0 bg-black/10 opacity-0 transition-opacity duration-200 group-active:opacity-100" />
         {children}
       </button>
     );

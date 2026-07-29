@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  MessagesSquare,
   Moon,
   Settings,
   Sun,
@@ -26,6 +27,7 @@ const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   Briefcase,
   Layers,
   CalendarDays,
+  MessagesSquare,
   Settings,
 };
 

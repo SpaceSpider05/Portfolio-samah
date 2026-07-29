@@ -26,6 +26,7 @@ class BookingResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'status' => $this->status,
+            'source' => $this->source ?? 'website',
             'notes' => $this->notes,
             'createdAt' => $this->created_at?->toIso8601String(),
         ];

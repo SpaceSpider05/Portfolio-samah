@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BRAND, NAV_LINKS } from "@/constants/brand";
 import { MagneticButton } from "@/components/ui/magnetic-button";
+import { getSectionIdFromHref, useNavLinks } from "@/hooks/use-nav-links";
+import { cn } from "@/lib/utils";
 
 type SiteFooterProps = {
   contactEmail?: string;
@@ -15,6 +17,7 @@ export function SiteFooter({
   contactPhone = BRAND.phone,
 }: SiteFooterProps) {
   const router = useRouter();
+  const { onHashLinkClick, isLinkActive } = useNavLinks();
 
   return (
     <footer id="contact" className="section-pad border-t border-border bg-tobago-800 text-fantasy-100">
@@ -30,13 +33,32 @@ export function SiteFooter({
         <div>
           <p className="type-overline mb-4 text-rose-300">Navigate</p>
           <ul className="space-y-2">
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className="text-fantasy-200/80 transition hover:text-rose-300">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const active = isLinkActive(link.href);
+              const sectionId = getSectionIdFromHref(link.href);
+
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    aria-current={active ? "page" : undefined}
+                    onClick={
+                      sectionId
+                        ? (event) => onHashLinkClick(event, link.href)
+                        : undefined
+                    }
+                    className={cn(
+                      "transition active:scale-95 active:text-rose-200",
+                      active
+                        ? "text-rose-300"
+                        : "text-fantasy-200/80 hover:text-rose-300",
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
@@ -44,7 +66,7 @@ export function SiteFooter({
           <p className="type-overline mb-4 text-rose-300">Connect</p>
           <ul className="space-y-2 text-fantasy-200/80">
             <li>
-              <a href={`mailto:${contactEmail}`} className="hover:text-rose-300">
+              <a href={`mailto:${contactEmail}`} className="transition hover:text-rose-300 active:text-rose-200">
                 {contactEmail}
               </a>
             </li>
@@ -52,58 +74,56 @@ export function SiteFooter({
               <li>
                 <a
                   href={`tel:${contactPhone.replace(/\s+/g, "")}`}
-                  className="hover:text-rose-300"
+                  className="transition hover:text-rose-300 active:text-rose-200"
                 >
                   {contactPhone}
                 </a>
               </li>
             ) : null}
             <li>
-              <a href={BRAND.socials.linkedin} className="hover:text-rose-300">
+              <a
+                href={BRAND.socials.linkedin}
+                className="transition hover:text-rose-300 active:text-rose-200"
+                target="_blank"
+                rel="noreferrer"
+              >
                 LinkedIn
               </a>
             </li>
             <li>
-              <a href={BRAND.socials.instagram} className="hover:text-rose-300">
+              <a
+                href={BRAND.socials.instagram}
+                className="transition hover:text-rose-300 active:text-rose-200"
+                target="_blank"
+                rel="noreferrer"
+              >
                 Instagram
               </a>
             </li>
             <li>
-              <a href={BRAND.socials.whatsapp} className="hover:text-rose-300">
+              <a
+                href={BRAND.socials.whatsapp}
+                className="transition hover:text-rose-300 active:text-rose-200"
+                target="_blank"
+                rel="noreferrer"
+              >
                 WhatsApp
               </a>
             </li>
           </ul>
 
-          <form
-            className="mt-6 flex gap-2"
-            onSubmit={(event) => {
-              event.preventDefault();
-            }}
-          >
-            <label className="sr-only" htmlFor="newsletter">
-              Newsletter email
-            </label>
-            <input
-              id="newsletter"
-              type="email"
-              required
-              placeholder="Email for insights"
-              className="w-full rounded-full border border-fantasy-200/20 bg-tobago-700 px-4 py-2.5 text-sm text-fantasy-100 outline-none placeholder:text-fantasy-200/40 focus:border-rose-400"
-            />
-            <button
-              type="submit"
-              className="rounded-full bg-rose-400 px-4 py-2.5 text-sm font-medium text-tobago-800"
-            >
-              Join
-            </button>
-          </form>
+          <p className="mt-6 text-sm text-fantasy-200/65">
+            Prefer a quick chat?{" "}
+            <Link href="/book" className="text-rose-300 transition hover:text-rose-200 active:text-rose-100">
+              Book a free consultation →
+            </Link>
+          </p>
         </div>
       </div>
 
       <div className="mx-auto mt-12 flex max-w-6xl flex-col gap-3 border-t border-fantasy-200/10 pt-6 text-sm text-fantasy-200/50 sm:flex-row sm:items-center sm:justify-between">
         <p>© {new Date().getFullYear()} {BRAND.name}. All rights reserved.</p>
-        <Link href="/privacy" className="hover:text-rose-300">
+        <Link href="/privacy" className="transition hover:text-rose-300 active:text-rose-200">
           Privacy
         </Link>
       </div>

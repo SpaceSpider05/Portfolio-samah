@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
     'email',
     'phone',
     'status',
+    'source',
     'notes',
 ])]
 class Booking extends Model

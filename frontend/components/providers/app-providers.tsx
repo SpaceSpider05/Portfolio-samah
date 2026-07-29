@@ -6,6 +6,9 @@ import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provi
 import { CustomCursor } from "@/components/layout/custom-cursor";
 import { IntroAnimation } from "@/components/intro/intro-animation";
 import { SiteBackground } from "@/components/layout/site-background";
+import { ToastHost } from "@/components/ui/toast-host";
+import { SamahAiWidget } from "@/components/ai/samah-ai-widget";
+import { CursorModeSync } from "@/components/providers/cursor-mode-sync";
 import { useUiStore } from "@/stores/ui-store";
 
 export function AppProviders({ children }: { children: ReactNode }) {
@@ -24,6 +27,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
       <SiteBackground lite={!isHome} />
       {isHome ? <IntroAnimation /> : null}
       <CustomCursor />
+      <CursorModeSync />
+      <ToastHost />
+      <SamahAiWidget />
       {children}
     </SmoothScrollProvider>
   );

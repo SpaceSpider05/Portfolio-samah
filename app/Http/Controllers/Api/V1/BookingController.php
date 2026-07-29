@@ -27,7 +27,7 @@ class BookingController extends Controller
 
         return response()->json([
             ...(new BookingResource($booking))->resolve(),
-            'message' => 'Your booking request has been received. A confirmation email is on its way.',
+            'message' => 'Your booking request has been received. We will respond within 24 hours.',
         ], 201);
     }
 }

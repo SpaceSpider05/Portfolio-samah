@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { HashScrollHandler } from "@/components/layout/hash-scroll-handler";
+import { ActiveSectionTracker } from "@/components/layout/active-section-tracker";
 import { BRAND } from "@/constants/brand";
 import { getSiteSettings } from "@/services/api";
 
@@ -41,6 +42,7 @@ export default async function MarketingLayout({
       />
       <AppProviders>
         <HashScrollHandler />
+        <ActiveSectionTracker />
         <SiteHeader />
         <main className="relative z-10 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
           {children}

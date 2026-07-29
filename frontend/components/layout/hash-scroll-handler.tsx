@@ -27,17 +27,29 @@ export function HashScrollHandler() {
   const lenis = useLenis();
 
   useEffect(() => {
-    const hash = window.location.hash.replace(/^#/, "");
-    if (!hash) {
-      return;
-    }
+    let timer: number | undefined;
 
-    const timer = window.setTimeout(() => {
-      scrollToSection(hash, lenis);
-    }, 80);
+    const scrollToHash = () => {
+      const hash = window.location.hash.replace(/^#/, "");
+      if (!hash) {
+        return;
+      }
 
-    return () => window.clearTimeout(timer);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        scrollToSection(hash, lenis);
+      }, 80);
+    };
+
+    scrollToHash();
+    window.addEventListener("hashchange", scrollToHash);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("hashchange", scrollToHash);
+    };
   }, [pathname, lenis]);
 
   return null;
 }
+

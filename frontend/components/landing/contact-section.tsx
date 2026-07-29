@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { BRAND } from "@/constants/brand";
 import { createBooking } from "@/services/api";
+import { useUiStore } from "@/stores/ui-store";
 
 type ContactSectionProps = {
   contactEmail?: string;
@@ -14,6 +15,7 @@ const fieldClass =
 export function ContactSection({
   contactEmail = BRAND.email,
 }: ContactSectionProps) {
+  const showToast = useUiStore((state) => state.showToast);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
@@ -38,6 +40,11 @@ export function ContactSection({
         notes: message,
       });
       setDone(true);
+      showToast({
+        type: "success",
+        title: "Message sent",
+        message: "Thanks! I’ll get back to you shortly.",
+      });
       setName("");
       setEmail("");
       setCompany("");

@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Api\V1\AboutController;
 use App\Http\Controllers\Api\V1\AccountController;
+use App\Http\Controllers\Api\V1\AiChatController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BookingController;
+use App\Http\Controllers\Api\V1\ManageAiConversationController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\ProjectController;
 use App\Http\Controllers\Api\V1\ServiceController;
@@ -26,6 +28,11 @@ Route::prefix('v1')->group(function (): void {
     Route::post('/bookings', [BookingController::class, 'store'])
         ->middleware('throttle:8,1');
 
+    Route::get('/ai/suggestions', [AiChatController::class, 'suggestions'])
+        ->middleware('throttle:30,1');
+    Route::post('/ai/chat', [AiChatController::class, 'chat'])
+        ->middleware('throttle:20,1');
+
     Route::middleware(['auth:sanctum', EnsureUserIsAdmin::class])->group(function (): void {
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);
@@ -43,6 +50,12 @@ Route::prefix('v1')->group(function (): void {
         Route::delete('/services/{service}', [ServiceController::class, 'destroy']);
 
         Route::get('/manage/bookings', [BookingController::class, 'index']);
+
+        Route::get('/manage/ai-conversations', [ManageAiConversationController::class, 'index']);
+        Route::get('/manage/ai-conversations/{aiConversation}', [ManageAiConversationController::class, 'show']);
+        Route::post('/manage/ai-conversations/{aiConversation}/summarize', [ManageAiConversationController::class, 'summarize']);
+        Route::post('/manage/ai-conversations/{aiConversation}/draft-follow-up', [ManageAiConversationController::class, 'draftFollowUp']);
+        Route::post('/manage/ai-conversations/{aiConversation}/follow-up', [ManageAiConversationController::class, 'sendFollowUp']);
 
         Route::get('/manage/about', [AboutController::class, 'showManage']);
         Route::put('/manage/about', [AboutController::class, 'update']);

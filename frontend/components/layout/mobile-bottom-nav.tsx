@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useLenis } from "lenis/react";
 import {
   Home,
@@ -14,13 +14,15 @@ import {
 import type { MouseEvent } from "react";
 import { cn } from "@/lib/utils";
 import { scrollToSection } from "@/components/layout/hash-scroll-handler";
+import { useNavLinks } from "@/hooks/use-nav-links";
+import { useNavStore } from "@/stores/nav-store";
 
 type NavItem = {
   href: string;
   label: string;
   icon: LucideIcon;
   sectionId?: string;
-  isActive: (pathname: string) => boolean;
+  isActive: (pathname: string, activeSection: string | null) => boolean;
 };
 
 const items: NavItem[] = [
@@ -29,14 +31,16 @@ const items: NavItem[] = [
     label: "Home",
     icon: Home,
     sectionId: "top",
-    isActive: (pathname) => pathname === "/",
+    isActive: (pathname, activeSection) =>
+      pathname === "/" && (!activeSection || activeSection === "top"),
   },
   {
     href: "/#services",
     label: "Services",
     icon: Layers,
     sectionId: "services",
-    isActive: () => false,
+    isActive: (pathname, activeSection) =>
+      pathname === "/" && activeSection === "services",
   },
   {
     href: "/portfolio",
@@ -49,7 +53,8 @@ const items: NavItem[] = [
     label: "Results",
     icon: BarChart3,
     sectionId: "stats",
-    isActive: () => false,
+    isActive: (pathname, activeSection) =>
+      pathname === "/" && activeSection === "stats",
   },
   {
     href: "/book",
@@ -61,22 +66,16 @@ const items: NavItem[] = [
 
 export function MobileBottomNav() {
   const pathname = usePathname();
-  const router = useRouter();
   const lenis = useLenis();
+  const { activeSection, onHashLinkClick } = useNavLinks();
 
-  const onSectionClick = (
-    event: MouseEvent<HTMLAnchorElement>,
-    sectionId: string,
-  ) => {
-    event.preventDefault();
-
+  const onTopClick = (event: MouseEvent<HTMLAnchorElement>) => {
     if (pathname === "/") {
-      scrollToSection(sectionId, lenis);
-      window.history.replaceState(null, "", `/#${sectionId}`);
-      return;
+      event.preventDefault();
+      scrollToSection("top", lenis);
+      window.history.replaceState(null, "", "/");
+      useNavStore.getState().setActiveSection(null);
     }
-
-    router.push(`/#${sectionId}`);
   };
 
   return (
@@ -85,14 +84,15 @@ export function MobileBottomNav() {
       className="glass-panel fixed inset-x-3 z-50 flex items-stretch justify-between rounded-full px-1.5 py-1.5 md:hidden bottom-[max(0.75rem,env(safe-area-inset-bottom))]"
     >
       {items.map(({ href, label, icon: Icon, sectionId, isActive }) => {
-        const active = isActive(pathname);
+        const active = isActive(pathname, activeSection);
 
         if (sectionId && sectionId !== "top") {
           return (
             <a
               key={href}
               href={href}
-              onClick={(event) => onSectionClick(event, sectionId)}
+              aria-current={active ? "page" : undefined}
+              onClick={(event) => onHashLinkClick(event, href)}
               className={cn(
                 "flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-[10px] font-medium uppercase tracking-wider transition",
                 "text-muted active:scale-95",
@@ -110,13 +110,8 @@ export function MobileBottomNav() {
             <Link
               key={href}
               href="/"
-              onClick={(event) => {
-                if (pathname === "/") {
-                  event.preventDefault();
-                  scrollToSection("top", lenis);
-                  window.history.replaceState(null, "", "/");
-                }
-              }}
+              aria-current={active ? "page" : undefined}
+              onClick={onTopClick}
               className={cn(
                 "flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-[10px] font-medium uppercase tracking-wider transition",
                 "text-muted active:scale-95",
@@ -133,6 +128,7 @@ export function MobileBottomNav() {
           <Link
             key={href}
             href={href}
+            aria-current={active ? "page" : undefined}
             className={cn(
               "flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-[10px] font-medium uppercase tracking-wider transition",
               "text-muted active:scale-95",

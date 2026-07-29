@@ -13,6 +13,7 @@ export type AdminBooking = {
   email: string;
   phone: string | null;
   status: string;
+  source?: string;
   notes: string | null;
   createdAt: string | null;
 };
@@ -98,6 +99,7 @@ export function AdminBookingsManager() {
                     {booking.businessType ? ` · ${booking.businessType}` : ""}
                   </p>
                 </div>
+                <div className="flex flex-wrap gap-2">
                 <span
                   className={cn(
                     "w-fit rounded-full px-2.5 py-1 text-[10px] uppercase tracking-wider",
@@ -108,6 +110,12 @@ export function AdminBookingsManager() {
                 >
                   {booking.status}
                 </span>
+                {booking.source === "ai_agent" ? (
+                  <span className="w-fit rounded-full bg-fantasy-200/10 px-2.5 py-1 text-[10px] uppercase tracking-wider text-silver-300">
+                    AI agent
+                  </span>
+                ) : null}
+                </div>
               </div>
 
               <div className="grid gap-2 text-sm text-muted sm:grid-cols-2">

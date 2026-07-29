@@ -43,13 +43,15 @@ php artisan migrate --seed
 php artisan storage:link
 ```
 
-Optional: adjust `.env` (`APP_URL`, `FRONTEND_URL`, `MAIL_*`, `DB_*`).
+Optional: adjust `.env` (`APP_URL`, `FRONTEND_URL`, `MAIL_*`, `DB_*`, `GROQ_API_KEY` for Samah AI).
 
 Default local API URL: `http://127.0.0.1:8000`  
 Default seeded admin (change after first login):
 
 - Email: `admin@samah.studio`
 - Password: `admin123`
+
+Samah AI setup details: see [`docs/SAMAH_AI.md`](docs/SAMAH_AI.md).
 
 ### 2. Frontend (Next.js)
 
@@ -91,11 +93,54 @@ Open:
 - Admin: [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
 - API: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
-Optional queue worker (booking emails when not using `MAIL_MAILER=log`):
+Optional queue worker (**required** for booking emails — they are queued):
 
 ```bash
-php artisan queue:listen --tries=1
+php artisan queue:work
 ```
+
+## Email (booking notifications)
+
+Two emails are sent on every successful booking:
+
+1. **Client** — confirmation: we received your booking and will reply within 24 hours  
+2. **Admin** — new book-a-call alert (to `MAIL_ADMIN_ADDRESS` or Admin → Settings → booking notify email)
+
+### Local (log driver)
+
+Keep `MAIL_MAILER=log` in `.env`. Messages are written to `storage/logs/laravel.log` (no real inbox).
+
+### Production / real SMTP (Brevo free)
+
+In root `.env`:
+
+```env
+MAIL_MAILER=smtp
+MAIL_SCHEME=null
+MAIL_HOST=smtp-relay.brevo.com
+MAIL_PORT=587
+MAIL_USERNAME=your-login@smtp-brevo.com
+MAIL_PASSWORD=your-smtp-key
+MAIL_FROM_ADDRESS=hello@samah.studio
+MAIL_FROM_NAME="Samah"
+MAIL_ADMIN_ADDRESS=admin@samah.studio
+QUEUE_CONNECTION=database
+```
+
+Use `MAIL_SCHEME=null` on port **587**. Use `MAIL_SCHEME=smtps` only if you switch to port **465**.
+
+Verify `MAIL_FROM_ADDRESS` as a sender in the Brevo dashboard, then run:
+
+```bash
+php artisan config:clear
+php artisan serve
+php artisan queue:work
+```
+
+Templates live in:
+
+- `resources/views/emails/booking-confirmation.blade.php` (client)
+- `resources/views/emails/booking-admin.blade.php` (admin)
 
 ## One-shot install (PowerShell)
 

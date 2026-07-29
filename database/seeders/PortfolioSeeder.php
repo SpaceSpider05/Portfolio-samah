@@ -4,10 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\AboutProfile;
 use App\Models\Achievement;
-use App\Models\ChartPoint;
 use App\Models\Project;
 use App\Models\Service;
-use App\Models\SiteMetric;
 use App\Models\TimelineEvent;
 use Illuminate\Database\Seeder;
 
@@ -151,32 +149,5 @@ class PortfolioSeeder extends Seeder
             'title', 'client', 'category', 'summary', 'challenge', 'solution', 'results',
             'technologies', 'cover_image', 'video_preview', 'is_published', 'status', 'sort_order', 'updated_at',
         ]);
-
-        SiteMetric::query()->delete();
-        foreach ([
-            ['label' => 'Projects Completed', 'value' => 120, 'suffix' => '+', 'prefix' => null],
-            ['label' => 'Clients', 'value' => 84, 'suffix' => '+', 'prefix' => null],
-            ['label' => 'Campaign Reach', 'value' => 12, 'suffix' => 'M+', 'prefix' => null],
-            ['label' => 'Revenue Generated', 'value' => 2.5, 'suffix' => 'M+', 'prefix' => '$'],
-        ] as $index => $metric) {
-            SiteMetric::query()->create([
-                ...$metric,
-                'sort_order' => $index,
-            ]);
-        }
-
-        ChartPoint::query()->delete();
-        foreach ([
-            ['label' => 'Q1', 'value' => 42],
-            ['label' => 'Q2', 'value' => 58],
-            ['label' => 'Q3', 'value' => 71],
-            ['label' => 'Q4', 'value' => 88],
-            ['label' => 'Q1+', 'value' => 96],
-        ] as $index => $point) {
-            ChartPoint::query()->create([
-                ...$point,
-                'sort_order' => $index,
-            ]);
-        }
     }
 }

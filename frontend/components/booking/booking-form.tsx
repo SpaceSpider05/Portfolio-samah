@@ -11,6 +11,7 @@ import { BRAND } from "@/constants/brand";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 import { GlassPanel } from "@/components/ui/glass-panel";
 import { cn } from "@/lib/utils";
+import { useUiStore } from "@/stores/ui-store";
 
 const bookingSchema = z.object({
   name: z.string().trim().min(2, "Enter your full name").max(120),
@@ -37,6 +38,7 @@ const fieldClass =
 export function BookingForm({ services }: BookingFormProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const showToast = useUiStore((state) => state.showToast);
   const [serverError, setServerError] = useState<string | null>(null);
   const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
 
@@ -86,6 +88,11 @@ export function BookingForm({ services }: BookingFormProps) {
       });
 
       setSubmittedEmail(response.email);
+      showToast({
+        type: "success",
+        title: "Booking received",
+        message: `Thanks ${values.name.split(" ")[0]}! We’ll reply within one business day.`,
+      });
       router.replace("/book?success=1", { scroll: false });
     } catch (error) {
       if (error instanceof ApiError && Object.keys(error.errors).length > 0) {
