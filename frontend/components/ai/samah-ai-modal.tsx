@@ -38,6 +38,7 @@ export function SamahAiModal() {
   const setOpen = useAiStore((state) => state.setOpen);
   const setMinimized = useAiStore((state) => state.setMinimized);
   const setMaximized = useAiStore((state) => state.setMaximized);
+  const setModalOpen = useUiStore((state) => state.setModalOpen);
   const messages = useAiStore((state) => state.messages);
   const suggestions = useAiStore((state) => state.suggestions);
   const setSuggestions = useAiStore((state) => state.setSuggestions);
@@ -62,11 +63,13 @@ export function SamahAiModal() {
 
   const close = () => {
     setOpen(false);
+    setModalOpen(false);
     setShowSettings(false);
   };
 
   const minimize = () => {
     setMinimized(true);
+    setModalOpen(false);
     setShowSettings(false);
   };
 

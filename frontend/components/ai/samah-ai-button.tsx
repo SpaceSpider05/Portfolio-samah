@@ -2,6 +2,7 @@
 
 import { Sparkles } from "lucide-react";
 import { useAiStore } from "@/stores/ai-store";
+import { useUiStore } from "@/stores/ui-store";
 import { cn } from "@/lib/utils";
 
 export function SamahAiButton() {
@@ -9,13 +10,18 @@ export function SamahAiButton() {
   const minimized = useAiStore((state) => state.minimized);
   const setOpen = useAiStore((state) => state.setOpen);
   const setMinimized = useAiStore((state) => state.setMinimized);
+  const setModalOpen = useUiStore((state) => state.setModalOpen);
 
   const onClick = () => {
     if (open && minimized) {
       setMinimized(false);
+      setModalOpen(true);
       return;
     }
-    setOpen(!open);
+
+    const next = !open;
+    setOpen(next);
+    setModalOpen(next);
   };
 
   return (

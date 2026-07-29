@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useUiStore } from "@/stores/ui-store";
 import { cn } from "@/lib/utils";
 
@@ -12,9 +12,7 @@ export function CustomCursor() {
   const label = useUiStore((s) => s.cursorLabel);
   const modalOpen = useUiStore((s) => s.modalOpen);
   const labelRef = useRef(label);
-  const posRef = useRef({ x: lastPointer.x, y: lastPointer.y });
   const pressedRef = useRef(false);
-  const visibleRef = useRef(lastPointer.seen);
   const rafRef = useRef<number | null>(null);
   const [finePointer, setFinePointer] = useState(false);
 
@@ -22,35 +20,54 @@ export function CustomCursor() {
 
   useEffect(() => {
     const mq = window.matchMedia("(pointer: fine) and (min-width: 1024px)");
-    setFinePointer(mq.matches);
-
-    const onChange = () => setFinePointer(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    const sync = () => setFinePointer(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
   }, []);
 
+  useLayoutEffect(() => {
+    if (!finePointer) {
+      document.documentElement.removeAttribute("data-custom-cursor");
+      return;
+    }
+
+    // System cursor while modal is open; custom cursor otherwise.
+    if (modalOpen) {
+      document.documentElement.removeAttribute("data-custom-cursor");
+      document.documentElement.classList.add("modal-open");
+      document.body.classList.add("modal-open");
+      document.querySelector(".cursor-none-desktop")?.classList.add("modal-open");
+    } else {
+      document.documentElement.setAttribute("data-custom-cursor", "on");
+      document.documentElement.classList.remove("modal-open");
+      document.body.classList.remove("modal-open");
+      document.querySelector(".cursor-none-desktop")?.classList.remove("modal-open");
+    }
+  }, [finePointer, modalOpen]);
+
   useEffect(() => {
-    if (!finePointer || modalOpen) {
+    if (!finePointer) {
       return;
     }
 
     const paint = () => {
       rafRef.current = null;
-      const { x, y } = posRef.current;
+      const { x, y } = lastPointer;
       const pressed = pressedRef.current;
-      const visible = visibleRef.current;
+      const hidden = modalOpen;
       const hasLabel = Boolean(labelRef.current);
 
       if (dotRef.current) {
         const scale = pressed ? 0.5 : 1;
         dotRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(${scale})`;
-        dotRef.current.style.opacity = visible ? "1" : "0";
+        dotRef.current.style.opacity = hidden ? "0" : "1";
       }
 
       if (ringRef.current) {
         const scale = pressed ? (hasLabel ? 0.9 : 0.75) : 1;
         ringRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(${scale})`;
-        ringRef.current.style.opacity = visible ? "1" : "0";
+        ringRef.current.style.opacity = hidden ? "0" : "1";
       }
     };
 
@@ -62,17 +79,9 @@ export function CustomCursor() {
     };
 
     const move = (event: MouseEvent) => {
-      posRef.current = { x: event.clientX, y: event.clientY };
       lastPointer.x = event.clientX;
       lastPointer.y = event.clientY;
       lastPointer.seen = true;
-      visibleRef.current = true;
-      schedulePaint();
-    };
-
-    const hide = () => {
-      visibleRef.current = false;
-      pressedRef.current = false;
       schedulePaint();
     };
 
@@ -86,46 +95,37 @@ export function CustomCursor() {
       schedulePaint();
     };
 
-    // Restore immediately after modal close (don't wait for next mousemove).
-    if (lastPointer.seen) {
-      posRef.current = { x: lastPointer.x, y: lastPointer.y };
-      visibleRef.current = true;
-    }
-
     window.addEventListener("mousemove", move, { passive: true });
-    document.addEventListener("mouseleave", hide);
     window.addEventListener("mousedown", onDown);
     window.addEventListener("mouseup", onUp);
+
+    // Force a visible paint immediately after modal close / mount.
     schedulePaint();
+    const kick = window.requestAnimationFrame(() => {
+      schedulePaint();
+    });
 
     return () => {
       window.removeEventListener("mousemove", move);
-      document.removeEventListener("mouseleave", hide);
       window.removeEventListener("mousedown", onDown);
       window.removeEventListener("mouseup", onUp);
+      window.cancelAnimationFrame(kick);
       if (rafRef.current !== null) {
         window.cancelAnimationFrame(rafRef.current);
       }
     };
-  }, [finePointer, modalOpen]);
+  }, [finePointer, modalOpen, label]);
 
-  // Keep tracking pointer position even while modal is open, so cursor returns instantly.
   useEffect(() => {
-    if (!finePointer || !modalOpen) {
-      return;
-    }
-
-    const track = (event: MouseEvent) => {
-      lastPointer.x = event.clientX;
-      lastPointer.y = event.clientY;
-      lastPointer.seen = true;
+    return () => {
+      document.documentElement.removeAttribute("data-custom-cursor");
+      document.documentElement.classList.remove("modal-open");
+      document.body.classList.remove("modal-open");
+      document.querySelector(".cursor-none-desktop")?.classList.remove("modal-open");
     };
+  }, []);
 
-    window.addEventListener("mousemove", track, { passive: true });
-    return () => window.removeEventListener("mousemove", track);
-  }, [finePointer, modalOpen]);
-
-  if (!finePointer || modalOpen) {
+  if (!finePointer) {
     return null;
   }
 
@@ -134,6 +134,7 @@ export function CustomCursor() {
       <div
         ref={dotRef}
         className="pointer-events-none fixed left-0 top-0 z-[100] h-2 w-2 rounded-full bg-rose-400 opacity-0 shadow-[0_0_18px_6px_color-mix(in_oklab,var(--rose-400)_55%,transparent)] will-change-transform"
+        style={{ opacity: modalOpen ? 0 : 1 }}
       />
       <div
         ref={ringRef}
@@ -142,6 +143,7 @@ export function CustomCursor() {
           "transition-[width,height,background-color] duration-200",
           label ? "h-20 w-20 bg-rose-400/25" : "h-8 w-8 bg-transparent",
         )}
+        style={{ opacity: modalOpen ? 0 : 1 }}
       >
         {label}
       </div>

@@ -252,8 +252,9 @@
   }
 
   @media (pointer: fine) and (min-width: 1024px) {
-    .cursor-none-desktop:not(.modal-open),
-    .cursor-none-desktop:not(.modal-open) * {
+    /* Only hide the OS cursor when the custom cursor is actively armed. */
+    html[data-custom-cursor="on"] .cursor-none-desktop,
+    html[data-custom-cursor="on"] .cursor-none-desktop * {
       cursor: none !important;
     }
   }
