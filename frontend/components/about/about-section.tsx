@@ -1,87 +1,54 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
 import type { AboutContent } from "@/types";
-import { GlassPanel } from "@/components/ui/glass-panel";
-import { gsap, registerGsap, useGSAP } from "@/lib/gsap";
+import { LANDING } from "@/constants/landing";
 import { resolveMediaUrl } from "@/lib/media";
-import { prefersReducedMotion } from "@/lib/motion";
+import { cn } from "@/lib/utils";
 
 type AboutSectionProps = {
   about: AboutContent;
 };
 
+function timelineKind(title: string, description: string): "education" | "career" {
+  const haystack = `${title} ${description}`.toLowerCase();
+  if (
+    haystack.includes("degree") ||
+    haystack.includes("university") ||
+    haystack.includes("bachelor") ||
+    haystack.includes("master") ||
+    haystack.includes("diploma") ||
+    haystack.includes("certificat") ||
+    haystack.includes("school") ||
+    haystack.includes("graduat") ||
+    haystack.includes("education") ||
+    haystack.includes("stud")
+  ) {
+    return "education";
+  }
+
+  return "career";
+}
+
 export function AboutSection({ about }: AboutSectionProps) {
-  const rootRef = useRef<HTMLElement>(null);
   const photoSrc = resolveMediaUrl(about.photoUrl);
   const isLocalLaravelMedia =
     photoSrc.startsWith("http://127.0.0.1") ||
     photoSrc.startsWith("http://localhost");
-  registerGsap();
 
-  useGSAP(
-    () => {
-      if (prefersReducedMotion() || !rootRef.current) {
-        return;
-      }
-
-      gsap.from(".about-photo", {
-        scrollTrigger: { trigger: rootRef.current, start: "top 78%" },
-        y: 36,
-        opacity: 0,
-        duration: 0.9,
-        ease: "power3.out",
-      });
-
-      gsap.from(".about-copy > *", {
-        scrollTrigger: { trigger: rootRef.current, start: "top 75%" },
-        y: 22,
-        opacity: 0,
-        stagger: 0.08,
-        duration: 0.7,
-        ease: "power2.out",
-      });
-
-      gsap.from(".timeline-line", {
-        scrollTrigger: { trigger: ".about-timeline", start: "top 75%" },
-        scaleY: 0,
-        transformOrigin: "top",
-        duration: 1.15,
-        ease: "power2.out",
-      });
-
-      gsap.from(".timeline-item", {
-        scrollTrigger: { trigger: ".about-timeline", start: "top 75%" },
-        x: -16,
-        opacity: 0,
-        stagger: 0.12,
-        duration: 0.65,
-        ease: "power2.out",
-      });
-
-      gsap.from(".about-card", {
-        scrollTrigger: { trigger: ".about-achievements", start: "top 82%" },
-        y: 20,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.55,
-      });
-    },
-    { scope: rootRef, dependencies: [about] },
-  );
+  const timeline = about.timeline ?? [];
 
   return (
-    <section id="about" ref={rootRef} className="section-pad relative">
+    <section id="about" className="section-pad relative">
       <div className="mx-auto max-w-6xl">
         <div className="max-w-2xl">
-          <p className="type-overline mb-3">Biography</p>
-          <h2 className="type-h2">A visual story of craft, not a wall of text.</h2>
+          <p className="type-overline mb-3">About me</p>
+          <h2 className="type-h2">Who I am, why I do this, why hire me</h2>
         </div>
 
-        <div className="mt-12 grid items-start gap-10 lg:grid-cols-[minmax(280px,0.85fr)_1.15fr] lg:gap-14">
-          <div className="about-photo lg:sticky lg:top-28">
-            <div className="relative mx-auto aspect-[4/5] max-w-md overflow-hidden rounded-[1.75rem] border border-silver-400/20 bg-tobago-600 shadow-[0_30px_80px_color-mix(in_oklab,var(--tobago-900)_45%,transparent)] lg:mx-0 lg:max-w-none">
+        <div className="mt-12 grid items-start gap-10 lg:grid-cols-[minmax(260px,0.9fr)_1.1fr] lg:gap-14">
+          <div className="space-y-6 lg:sticky lg:top-28">
+            <div className="relative mx-auto aspect-4/5 w-full max-w-md overflow-hidden rounded-[1.75rem] border border-silver-400/20 bg-tobago-600 lg:mx-0 lg:max-w-none">
               <Image
                 src={photoSrc}
                 alt={`${about.name} portrait`}
@@ -90,52 +57,117 @@ export function AboutSection({ about }: AboutSectionProps) {
                 sizes="(max-width: 1024px) 90vw, 380px"
                 unoptimized={isLocalLaravelMedia}
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-tobago-900 via-tobago-900/55 to-transparent px-6 pb-6 pt-20">
-                <p className="font-display text-3xl text-fantasy-100 md:text-4xl">{about.name}</p>
+              <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-tobago-900 via-tobago-900/55 to-transparent px-6 pb-6 pt-20">
+                <p className="font-display text-3xl text-fantasy-100 md:text-4xl">
+                  {about.name}
+                </p>
                 <p className="mt-1 text-sm text-vanilla-200/90">{about.role}</p>
               </div>
             </div>
+
+            {about.achievements.length > 0 ? (
+              <div className="grid grid-cols-3 gap-3">
+                {about.achievements.slice(0, 3).map((item) => (
+                  <div
+                    key={item.id}
+                    className="rounded-2xl border border-silver-400/15 bg-tobago-800/40 px-3 py-4 text-center"
+                  >
+                    <p className="font-display text-2xl text-fantasy-100">
+                      {item.value}
+                      {item.suffix}
+                    </p>
+                    <p className="mt-1 text-[11px] uppercase tracking-wider text-muted">
+                      {item.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </div>
 
-          <div className="about-copy space-y-8">
-            <p className="type-body text-lg leading-relaxed text-vanilla-200/90 md:text-xl">
-              {about.bio}
-            </p>
-
-            <div className="about-timeline relative pl-10">
-              <div className="timeline-line absolute bottom-3 left-[15px] top-3 w-px origin-top bg-gradient-to-b from-rose-400 via-rose-400/70 to-transparent" />
-              <ol className="space-y-8">
-                {about.timeline.map((item) => (
-                  <li key={item.id} className="timeline-item relative">
-                    <span className="absolute -left-10 top-1.5 flex h-4 w-4 items-center justify-center rounded-full border-2 border-rose-400 bg-tobago-700">
-                      <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
-                    </span>
-                    <p className="type-overline">{item.year}</p>
-                    <p className="type-h3 mt-1 text-xl text-fantasy-100 md:text-2xl">{item.title}</p>
-                    <p className="type-caption mt-2 max-w-md text-silver-300">{item.description}</p>
-                  </li>
-                ))}
-              </ol>
+          <div className="space-y-10">
+            <div>
+              <p className="type-overline">Story</p>
+              <p className="type-body mt-4 text-lg leading-relaxed text-vanilla-200/90 md:text-xl">
+                {about.bio}
+              </p>
             </div>
 
-            <div className="about-achievements grid gap-3 sm:grid-cols-3">
-              {about.achievements.map((item) => (
-                <GlassPanel key={item.id} className="about-card p-5 text-center sm:text-left">
-                  <p className="font-display text-4xl text-fantasy-100">
-                    {item.value}
-                    {item.suffix}
-                  </p>
-                  <p className="type-caption mt-1">{item.label}</p>
-                </GlassPanel>
-              ))}
-            </div>
-
-            <GlassPanel className="border-rose-400/25 bg-gradient-to-br from-tobago-600/80 to-tobago-700/60 p-6 md:p-7">
-              <p className="type-overline mb-3">Mission</p>
-              <p className="type-h3 text-2xl leading-snug text-vanilla-200 md:text-3xl">
+            <div>
+              <p className="type-overline">Mission</p>
+              <p className="mt-3 font-display text-2xl leading-snug text-heading md:text-3xl">
                 {about.mission}
               </p>
-            </GlassPanel>
+            </div>
+
+            <div>
+              <p className="type-overline">Core values</p>
+              <ul className="mt-4 flex flex-wrap gap-3">
+                {LANDING.about.values.map((value) => (
+                  <li
+                    key={value}
+                    className="rounded-full border border-silver-400/20 px-4 py-2 text-sm text-heading-soft"
+                  >
+                    {value}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {timeline.length > 0 ? (
+              <div>
+                <div className="flex flex-wrap items-end justify-between gap-3">
+                  <div>
+                    <p className="type-overline">Education & journey</p>
+                    <h3 className="mt-2 font-display text-2xl text-heading md:text-3xl">
+                      Timeline
+                    </h3>
+                  </div>
+                  <p className="text-xs text-muted">
+                    Education, certifications, and career milestones
+                  </p>
+                </div>
+
+                <ol className="relative mt-8 space-y-0 border-l border-rose-400/35 pl-6 md:pl-8">
+                  {timeline.map((item, index) => {
+                    const kind = timelineKind(item.title, item.description);
+
+                    return (
+                      <li key={item.id} className="relative pb-8 last:pb-0">
+                        <span className="absolute -left-[1.7rem] top-1.5 flex h-4 w-4 items-center justify-center rounded-full border-2 border-rose-400 bg-tobago-700 md:-left-[2.2rem]">
+                          <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+                        </span>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="type-overline text-rose-300">{item.year}</p>
+                          <span
+                            className={cn(
+                              "rounded-full px-2.5 py-0.5 text-[10px] uppercase tracking-wider",
+                              kind === "education"
+                                ? "bg-vanilla-200/15 text-vanilla-200"
+                                : "bg-rose-400/15 text-rose-200",
+                            )}
+                          >
+                            {kind === "education" ? "Education" : "Career"}
+                          </span>
+                        </div>
+
+                        <h4 className="mt-2 font-display text-xl text-heading md:text-2xl">
+                          {item.title}
+                        </h4>
+                        <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted md:text-base">
+                          {item.description}
+                        </p>
+
+                        {index < timeline.length - 1 ? (
+                          <span className="sr-only">Next milestone</span>
+                        ) : null}
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

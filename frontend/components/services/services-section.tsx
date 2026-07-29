@@ -70,7 +70,27 @@ function DemoVisual({ type, active }: { type: Service["hoverDemo"]; active: bool
   );
 }
 
-function ServiceCard({ service }: { service: Service }) {
+function serviceCardWidthClass(count: number): string {
+  if (count <= 1) {
+    return "w-full max-w-lg";
+  }
+
+  // 2 or 4 → balanced pairs (2x2 for four)
+  if (count === 2 || count === 4) {
+    return "w-full sm:w-[calc(50%-0.625rem)] max-w-xl";
+  }
+
+  // 3, 5, 6, 7… → up to 3 per row; leftover row centers via justify-center
+  return "w-full sm:w-[calc(50%-0.625rem)] lg:w-[calc(33.333%-0.875rem)] max-w-md";
+}
+
+function ServiceCard({
+  service,
+  className,
+}: {
+  service: Service;
+  className?: string;
+}) {
   const router = useRouter();
   const [active, setActive] = useState(false);
   const setCursorLabel = useUiStore((s) => s.setCursorLabel);
@@ -80,6 +100,7 @@ function ServiceCard({ service }: { service: Service }) {
       className={cn(
         "group relative overflow-hidden p-6 transition-transform duration-300",
         "md:hover:-translate-y-2",
+        className,
       )}
       onMouseEnter={() => {
         setActive(true);
@@ -118,15 +139,25 @@ function ServiceCard({ service }: { service: Service }) {
 }
 
 export function ServicesSection({ services }: ServicesSectionProps) {
+  const count = services.length;
+  const cardWidth = serviceCardWidthClass(count);
+
   return (
     <section id="services" className="section-pad section-alt">
       <div className="mx-auto max-w-6xl">
         <p className="type-overline mb-3">Services</p>
-        <h2 className="type-h2 max-w-xl">Interactive capabilities that show the outcome.</h2>
+        <h2 className="type-h2 max-w-xl">Capabilities that move outcomes</h2>
+        <p className="mt-4 max-w-2xl text-base text-muted">
+          Clear offers, short descriptions, and a direct next step — no giant walls of text.
+        </p>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
+        <div className="mt-12 flex flex-wrap justify-center gap-5">
           {services.map((service) => (
-            <ServiceCard key={service.id} service={service} />
+            <ServiceCard
+              key={service.id}
+              service={service}
+              className={cardWidth}
+            />
           ))}
         </div>
       </div>

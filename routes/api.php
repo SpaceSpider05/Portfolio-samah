@@ -13,7 +13,8 @@ use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
-    Route::post('/auth/login', [AuthController::class, 'login']);
+    Route::post('/auth/login', [AuthController::class, 'login'])
+        ->middleware('throttle:5,1');
 
     Route::get('/about', [AboutController::class, 'show']);
     Route::get('/services', [ServiceController::class, 'index']);

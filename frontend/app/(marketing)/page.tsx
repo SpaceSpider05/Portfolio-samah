@@ -1,38 +1,61 @@
 import { HeroSection } from "@/components/hero/hero-section";
+import { TrustBarSection } from "@/components/landing/trust-bar-section";
 import { AboutSection } from "@/components/about/about-section";
 import { ServicesSection } from "@/components/services/services-section";
+import { WhyMeSection } from "@/components/landing/why-me-section";
 import { PortfolioSection } from "@/components/portfolio/portfolio-section";
+import { ProcessSection } from "@/components/landing/process-section";
+import { SkillsSection } from "@/components/landing/skills-section";
 import { StatsSection } from "@/components/stats/stats-section";
+import { FaqSection } from "@/components/landing/faq-section";
+import { FinalCtaSection } from "@/components/landing/final-cta-section";
+import { ContactSection } from "@/components/landing/contact-section";
 import { SectionDivider } from "@/components/ui/section-divider";
-import { getAbout, getProjects, getServices, getStats } from "@/services/api";
+import { getAbout, getProjects, getServices, getSiteSettings, getStats } from "@/services/api";
 
 export default async function HomePage() {
-  const [about, services, projects, stats] = await Promise.all([
+  const [about, services, projects, stats, siteSettings] = await Promise.all([
     getAbout(),
     getServices(),
     getProjects(),
     getStats(),
+    getSiteSettings(),
   ]);
 
+  // Homepage featured strip: only the 3 most recently created projects.
   const featuredProjects = [...projects]
-    .sort((a, b) => Number(b.id) - Number(a.id))
-    .slice(0, 3);
+    .sort((a, b) => {
+      const aTime = a.createdAt ? Date.parse(a.createdAt) : Number.NaN;
+      const bTime = b.createdAt ? Date.parse(b.createdAt) : Number.NaN;
+      if (!Number.isNaN(aTime) && !Number.isNaN(bTime) && aTime !== bTime) {
+        return bTime - aTime;
+      }
 
-  const featuredServices = [...services]
-    .sort((a, b) => Number(b.id) - Number(a.id))
+      const aId = Number(a.id);
+      const bId = Number(b.id);
+      if (!Number.isNaN(aId) && !Number.isNaN(bId)) {
+        return bId - aId;
+      }
+
+      return String(b.id).localeCompare(String(a.id));
+    })
     .slice(0, 3);
 
   return (
     <>
-      <HeroSection />
-      <SectionDivider />
+      <HeroSection about={about} stats={stats} />
+      <TrustBarSection />
       <AboutSection about={about} />
       <SectionDivider />
-      <ServicesSection services={featuredServices} />
-      <SectionDivider />
+      <ServicesSection services={services} />
+      <WhyMeSection />
       <PortfolioSection projects={featuredProjects} />
-      <SectionDivider />
+      <ProcessSection />
+      <SkillsSection />
       <StatsSection stats={stats} />
+      <FaqSection />
+      <FinalCtaSection />
+      <ContactSection contactEmail={siteSettings.contactEmail} />
     </>
   );
 }

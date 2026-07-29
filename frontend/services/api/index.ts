@@ -33,29 +33,25 @@ function delay<T>(data: T, ms = 80): Promise<T> {
   });
 }
 
-async function withMockFallback<T>(loader: () => Promise<T>, fallback: T): Promise<T> {
+/** Use mock data only when mock mode is explicitly enabled (never on API failure). */
+async function loadContent<T>(loader: () => Promise<T>, mock: T): Promise<T> {
   if (isMockMode()) {
-    return delay(fallback);
+    return delay(mock);
   }
 
-  try {
-    return await loader();
-  } catch (error) {
-    console.warn("[api] Falling back to mock data:", error);
-    return fallback;
-  }
+  return loader();
 }
 
 export async function getAbout(): Promise<AboutContent> {
-  return withMockFallback(() => apiClient<AboutContent>("/api/v1/about"), mockAbout);
+  return loadContent(() => apiClient<AboutContent>("/api/v1/about"), mockAbout);
 }
 
 export async function getServices(): Promise<Service[]> {
-  return withMockFallback(() => apiClient<Service[]>("/api/v1/services"), mockServices);
+  return loadContent(() => apiClient<Service[]>("/api/v1/services"), mockServices);
 }
 
 export async function getProjects(): Promise<Project[]> {
-  return withMockFallback(() => apiClient<Project[]>("/api/v1/projects"), mockProjects);
+  return loadContent(() => apiClient<Project[]>("/api/v1/projects"), mockProjects);
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | undefined> {
@@ -67,23 +63,22 @@ export async function getProjectBySlug(slug: string): Promise<Project | undefine
     return await apiClient<Project>(`/api/v1/projects/${slug}`, {
       cache: "no-store",
     });
-  } catch {
-    return undefined;
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return undefined;
+    }
+    throw error;
   }
 }
 
 export async function getStats(): Promise<StatsContent> {
-  return withMockFallback(async () => {
-    const stats = await apiClient<StatsContent>("/api/v1/stats");
-    if (!stats.metrics?.length && !stats.chart?.length) {
-      return mockStats;
-    }
-    return stats;
+  return loadContent(async () => {
+    return apiClient<StatsContent>("/api/v1/stats");
   }, mockStats);
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
-  return withMockFallback(
+  return loadContent(
     () => apiClient<SiteSettings>("/api/v1/site-settings"),
     mockSiteSettings,
   );

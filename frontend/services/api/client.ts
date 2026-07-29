@@ -23,8 +23,11 @@ type RequestOptions = {
 };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+
+/** Explicit mock only — never auto-enabled, never in production. */
 const USE_MOCK =
-  process.env.NEXT_PUBLIC_USE_MOCK === "true" || !API_URL;
+  process.env.NEXT_PUBLIC_USE_MOCK === "true" &&
+  process.env.NODE_ENV !== "production";
 
 export function isMockMode(): boolean {
   return USE_MOCK;
@@ -41,6 +44,13 @@ export async function apiClient<T>(
   if (USE_MOCK) {
     throw new Error(
       `Mock mode active — route "${path}" should be handled by mock adapters.`,
+    );
+  }
+
+  if (!API_URL) {
+    throw new ApiError(
+      "NEXT_PUBLIC_API_URL is not set. Configure the Laravel API URL in frontend/.env.local.",
+      500,
     );
   }
 

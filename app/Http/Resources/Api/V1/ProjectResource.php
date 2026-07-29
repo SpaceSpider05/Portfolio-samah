@@ -37,6 +37,7 @@ class ProjectResource extends JsonResource
             'isPublished' => (bool) $this->is_published,
             'status' => $this->status?->value ?? 'completed',
             'sortOrder' => (int) $this->sort_order,
+            'createdAt' => $this->created_at?->toIso8601String(),
         ];
     }
 }

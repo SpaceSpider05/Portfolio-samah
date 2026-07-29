@@ -77,10 +77,6 @@ function LoginForm() {
       >
         {loading ? "Signing in…" : "Sign in"}
       </button>
-
-      <p className="text-center text-xs text-silver-400">
-        Authenticated by Laravel Sanctum · admin@samah.studio / admin123
-      </p>
     </form>
   );
 }

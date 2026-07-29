@@ -4,12 +4,12 @@ export const BRAND = {
   subtitle:
     "Premium digital marketing and brand experiences crafted with cinematic precision.",
   email: "hello@samah.studio",
-  phone: "+1 (555) 010-2040",
+  phone: "+212 660-311363",
   socials: {
-    linkedin: "https://linkedin.com",
-    instagram: "https://instagram.com",
-    whatsapp: "https://wa.me/15550102040",
-    telegram: "https://t.me/samah",
+    linkedin: "https://ma.linkedin.com/in/samah-fakhour-87b261368/fr",
+    instagram: "https://www.instagram.com/growwithsamah/",
+    whatsapp: "https://wa.me/+212660311363",
+    telegram: "https://t.me/+212660311363",
   },
 } as const;
 
@@ -17,6 +17,7 @@ export const NAV_LINKS = [
   { href: "/#about", label: "About" },
   { href: "/#services", label: "Services" },
   { href: "/portfolio", label: "Portfolio" },
-  { href: "/#stats", label: "Results" },
+  { href: "/#process", label: "Process" },
+  { href: "/#faq", label: "FAQ" },
   { href: "/book", label: "Book" },
 ] as const;

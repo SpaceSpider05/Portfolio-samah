@@ -55,6 +55,7 @@ export type Project = {
   isPublished?: boolean;
   status?: "draft" | "in_progress" | "completed";
   sortOrder?: number;
+  createdAt?: string;
 };
 
 export type StatMetric = {

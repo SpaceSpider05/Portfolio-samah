@@ -1,58 +1,185 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Samah Portfolio
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Premium digital-marketing portfolio monorepo:
 
-## About Laravel
+- **Laravel 13 API** (root) — Sanctum auth, portfolio content, bookings, media
+- **Next.js 15 frontend** (`frontend/`) — marketing site + admin panel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requirements
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP **8.3+**
+- Composer
+- Node.js **20+** and npm
+- SQLite (default) or MySQL/PostgreSQL
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Install (full project)
 
-## Learning Laravel
+Run these from the **repository root**.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 1. Backend (Laravel API)
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+copy .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+> On macOS/Linux use `cp .env.example .env` instead of `copy`.
 
-## Contributing
+If you use the default SQLite database:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+# Windows (PowerShell)
+New-Item -ItemType File -Force database/database.sqlite
 
-## Code of Conduct
+# macOS / Linux
+touch database/database.sqlite
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Then migrate, seed, and link storage:
 
-## Security Vulnerabilities
+```bash
+php artisan migrate --seed
+php artisan storage:link
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Optional: adjust `.env` (`APP_URL`, `FRONTEND_URL`, `MAIL_*`, `DB_*`).
+
+Default local API URL: `http://127.0.0.1:8000`  
+Default seeded admin (change after first login):
+
+- Email: `admin@samah.studio`
+- Password: `admin123`
+
+### 2. Frontend (Next.js)
+
+```bash
+cd frontend
+npm install
+copy .env.example .env.local
+```
+
+> On macOS/Linux: `cp .env.example .env.local`
+
+Confirm `frontend/.env.local` contains:
+
+```env
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
+LARAVEL_API_URL=http://127.0.0.1:8000
+NEXT_PUBLIC_USE_MOCK=false
+```
+
+### 3. Run locally (two terminals)
+
+**Terminal A — API**
+
+```bash
+php artisan serve
+```
+
+**Terminal B — Frontend**
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open:
+
+- Site: [http://localhost:3000](http://localhost:3000)
+- Admin: [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
+- API: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+Optional queue worker (booking emails when not using `MAIL_MAILER=log`):
+
+```bash
+php artisan queue:listen --tries=1
+```
+
+## One-shot install (PowerShell)
+
+From the repo root:
+
+```powershell
+composer install
+Copy-Item .env.example .env -ErrorAction SilentlyContinue
+php artisan key:generate
+New-Item -ItemType File -Force database/database.sqlite | Out-Null
+php artisan migrate --seed
+php artisan storage:link
+Set-Location frontend
+npm install
+Copy-Item .env.example .env.local -ErrorAction SilentlyContinue
+Set-Location ..
+```
+
+Then start API + frontend as above.
+
+## One-shot install (macOS / Linux)
+
+```bash
+composer install
+cp -n .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate --seed
+php artisan storage:link
+cd frontend
+npm install
+cp -n .env.example .env.local
+cd ..
+```
+
+## Useful commands
+
+| Area | Command | Purpose |
+|------|---------|---------|
+| API | `php artisan serve` | Start Laravel on `:8000` |
+| API | `php artisan migrate --seed` | Reset schema + seed |
+| API | `php artisan migrate:fresh --seed` | Drop DB, remigrate, seed |
+| API | `php artisan test` | Run Pest tests |
+| API | `php artisan storage:link` | Public media symlinks |
+| Frontend | `cd frontend && npm run dev` | Next.js dev server |
+| Frontend | `cd frontend && npm run build` | Production build |
+| Frontend | `cd frontend && npm start` | Serve production build |
+| Frontend | `cd frontend && npm run lint` | ESLint |
+
+## Project structure
+
+```
+Prt-Samah/
+├── app/                 # Laravel domain (models, API, mail)
+├── routes/api.php       # Public + admin API routes
+├── database/            # Migrations & seeders
+├── storage/app/public   # Uploaded media (after storage:link)
+├── frontend/            # Next.js marketing site + admin
+│   ├── app/             # App Router pages
+│   ├── components/      # UI sections
+│   └── services/api/    # API client
+└── README.md
+```
+
+## Environment notes
+
+| Variable | Where | Notes |
+|----------|-------|-------|
+| `APP_URL` | root `.env` | Must match Laravel URL (media absolute URLs) |
+| `FRONTEND_URL` | root `.env` | CORS / Sanctum — usually `http://localhost:3000` |
+| `MAIL_*` | root `.env` | Use real SMTP in production (`log` is local only) |
+| `NEXT_PUBLIC_API_URL` | `frontend/.env.local` | Browser → Laravel |
+| `LARAVEL_API_URL` | `frontend/.env.local` | Server-side Next → Laravel |
+| `NEXT_PUBLIC_USE_MOCK` | `frontend/.env.local` | Local UI-only mock. Ignored in production. Never falls back on API errors. |
+
+## Production checklist (short)
+
+1. Set `APP_DEBUG=false` and a strong admin password
+2. Configure real `APP_URL`, `FRONTEND_URL`, CORS, and mail
+3. Run `php artisan migrate --force` and `php artisan storage:link`
+4. Build frontend: `cd frontend && npm run build && npm start`
+5. Point `NEXT_PUBLIC_API_URL` / `LARAVEL_API_URL` at the live API
+6. Add your production media host to `frontend/next.config.ts` `remotePatterns`
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT
