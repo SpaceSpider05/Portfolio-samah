@@ -3,34 +3,67 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\ChartPoint;
-use App\Models\SiteMetric;
+use App\Models\Project;
+use App\Models\Service;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 
 class StatsController extends Controller
 {
     public function show(): JsonResponse
     {
-        $metrics = SiteMetric::query()
-            ->orderBy('sort_order')
-            ->get()
-            ->map(fn (SiteMetric $metric) => [
-                'id' => (string) $metric->id,
-                'label' => $metric->label,
-                'value' => $metric->value,
-                'suffix' => $metric->suffix,
-                'prefix' => $metric->prefix,
-            ])
-            ->values();
+        $completedProjects = Project::query()->completed()->count();
+        $clients = Project::query()
+            ->completed()
+            ->select('client')
+            ->distinct()
+            ->count('client');
+        $services = Service::query()->published()->count();
 
-        $chart = ChartPoint::query()
-            ->orderBy('sort_order')
+        $metrics = [
+            [
+                'id' => 'projects',
+                'label' => 'Projects completed',
+                'value' => $completedProjects,
+                'suffix' => '',
+                'prefix' => null,
+            ],
+            [
+                'id' => 'clients',
+                'label' => 'Clients',
+                'value' => $clients,
+                'suffix' => '',
+                'prefix' => null,
+            ],
+            [
+                'id' => 'services',
+                'label' => 'Services offered',
+                'value' => $services,
+                'suffix' => '',
+                'prefix' => null,
+            ],
+        ];
+
+        $chart = Project::query()
+            ->completed()
+            ->select('category')
+            ->selectRaw('count(*) as total')
+            ->groupBy('category')
+            ->orderByDesc('total')
+            ->limit(5)
             ->get()
-            ->map(fn (ChartPoint $point) => [
-                'label' => $point->label,
-                'value' => $point->value,
+            ->map(fn ($row) => [
+                'label' => Str::limit((string) $row->category, 18, ''),
+                'value' => (int) $row->total,
             ])
-            ->values();
+            ->values()
+            ->all();
+
+        if ($chart === []) {
+            $chart = [
+                ['label' => 'Ready', 'value' => 1],
+            ];
+        }
 
         return response()->json([
             'metrics' => $metrics,

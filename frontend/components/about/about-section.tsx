@@ -5,6 +5,7 @@ import { useRef } from "react";
 import type { AboutContent } from "@/types";
 import { GlassPanel } from "@/components/ui/glass-panel";
 import { gsap, registerGsap, useGSAP } from "@/lib/gsap";
+import { resolveMediaUrl } from "@/lib/media";
 import { prefersReducedMotion } from "@/lib/motion";
 
 type AboutSectionProps = {
@@ -13,6 +14,10 @@ type AboutSectionProps = {
 
 export function AboutSection({ about }: AboutSectionProps) {
   const rootRef = useRef<HTMLElement>(null);
+  const photoSrc = resolveMediaUrl(about.photoUrl);
+  const isLocalLaravelMedia =
+    photoSrc.startsWith("http://127.0.0.1") ||
+    photoSrc.startsWith("http://localhost");
   registerGsap();
 
   useGSAP(
@@ -78,12 +83,12 @@ export function AboutSection({ about }: AboutSectionProps) {
           <div className="about-photo lg:sticky lg:top-28">
             <div className="relative mx-auto aspect-[4/5] max-w-md overflow-hidden rounded-[1.75rem] border border-silver-400/20 bg-tobago-600 shadow-[0_30px_80px_color-mix(in_oklab,var(--tobago-900)_45%,transparent)] lg:mx-0 lg:max-w-none">
               <Image
-                src={about.photoUrl}
+                src={photoSrc}
                 alt={`${about.name} portrait`}
                 fill
-                className="object-cover object-[center_15%]"
+                className="object-cover object-center"
                 sizes="(max-width: 1024px) 90vw, 380px"
-                priority
+                unoptimized={isLocalLaravelMedia}
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-tobago-900 via-tobago-900/55 to-transparent px-6 pb-6 pt-20">
                 <p className="font-display text-3xl text-fantasy-100 md:text-4xl">{about.name}</p>

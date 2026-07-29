@@ -13,10 +13,9 @@ const outfit = Outfit({
 
 const eduHand = Edu_VIC_WA_NT_Hand({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600"],
   variable: "--font-edu-hand",
   display: "swap",
-  adjustFontFallback: false,
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";

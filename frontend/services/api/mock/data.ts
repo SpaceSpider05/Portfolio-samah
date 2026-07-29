@@ -2,8 +2,16 @@ import type {
   AboutContent,
   Project,
   Service,
+  SiteSettings,
   StatsContent,
 } from "@/types";
+
+export const mockSiteSettings: SiteSettings = {
+  contactEmail: "hello@samah.studio",
+  contactPhone: "+1 (555) 010-2040",
+  bookingNotifyEmail: "admin@samah.studio",
+  mailFromName: "Samah",
+};
 
 export const mockAbout: AboutContent = {
   name: "Samah",
@@ -89,6 +97,20 @@ export const mockProjects: Project[] = [
     results: ["+186% organic traffic", "3.2x ROAS", "41% lift in AOV"],
     technologies: ["Next.js", "GA4", "Meta Ads", "Contentful"],
     coverImage: "/images/project-lumen.svg",
+    galleryImages: [
+      {
+        path: "/images/project-northline.svg",
+        description: "Performance dashboard after relaunch",
+      },
+      {
+        path: "/images/project-velvet.svg",
+        description: "Campaign creative system",
+      },
+      {
+        path: "/images/project-lumen.svg",
+        description: "Brand identity applications",
+      },
+    ],
   },
   {
     id: "p2",
@@ -103,6 +125,16 @@ export const mockProjects: Project[] = [
     results: ["-38% CAC", "+92% demo bookings", "2.1x pipeline"],
     technologies: ["HubSpot", "LinkedIn Ads", "Framer", "Looker"],
     coverImage: "/images/project-northline.svg",
+    galleryImages: [
+      {
+        path: "/images/project-lumen.svg",
+        description: "Landing page experiment winner",
+      },
+      {
+        path: "/images/project-northline.svg",
+        description: "LinkedIn creative variants",
+      },
+    ],
   },
   {
     id: "p3",
@@ -117,27 +149,32 @@ export const mockProjects: Project[] = [
     results: ["12M+ campaign reach", "+240% engagement", "Sold-out drop in 6 hours"],
     technologies: ["Instagram", "TikTok", "CapCut", "Notion"],
     coverImage: "/images/project-atelier.svg",
+    galleryImages: [
+      {
+        path: "/images/project-atelier.svg",
+        description: "Editorial content pillars",
+      },
+      {
+        path: "/images/project-velvet.svg",
+        description: "Short-form content frames",
+      },
+      {
+        path: "/images/project-lumen.svg",
+        description: "Drop campaign storytelling",
+      },
+    ],
   },
 ];
 
 export const mockStats: StatsContent = {
   metrics: [
-    { id: "m1", label: "Projects Completed", value: 120, suffix: "+" },
-    { id: "m2", label: "Clients", value: 84, suffix: "+" },
-    { id: "m3", label: "Campaign Reach", value: 12, suffix: "M+" },
-    {
-      id: "m4",
-      label: "Revenue Generated",
-      value: 2.5,
-      suffix: "M+",
-      prefix: "$",
-    },
+    { id: "projects", label: "Projects completed", value: 3, suffix: "" },
+    { id: "clients", label: "Clients", value: 3, suffix: "" },
+    { id: "services", label: "Services offered", value: 3, suffix: "" },
   ],
   chart: [
-    { label: "Q1", value: 42 },
-    { label: "Q2", value: 58 },
-    { label: "Q3", value: 71 },
-    { label: "Q4", value: 88 },
-    { label: "Q1+", value: 96 },
+    { label: "Brand + Perf", value: 1 },
+    { label: "Demand Gen", value: 1 },
+    { label: "Social + Content", value: 1 },
   ],
 };

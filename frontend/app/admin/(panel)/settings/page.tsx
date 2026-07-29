@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { SettingsModule } from "@/components/admin/admin-modules";
+import { AdminSettingsManager } from "@/components/admin/admin-settings-manager";
 
 export const metadata: Metadata = { title: "Settings" };
 
-export default function Page() {
-  return <SettingsModule />;
+export default function AdminSettingsPage() {
+  return <AdminSettingsManager />;
 }

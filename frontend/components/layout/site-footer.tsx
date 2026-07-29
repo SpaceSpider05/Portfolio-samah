@@ -1,22 +1,28 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { BRAND, NAV_LINKS } from "@/constants/brand";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 
-export function SiteFooter() {
+type SiteFooterProps = {
+  contactEmail?: string;
+  contactPhone?: string | null;
+};
+
+export function SiteFooter({
+  contactEmail = BRAND.email,
+  contactPhone = BRAND.phone,
+}: SiteFooterProps) {
+  const router = useRouter();
+
   return (
     <footer id="contact" className="section-pad border-t border-border bg-tobago-800 text-fantasy-100">
       <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <p className="font-display text-4xl">{BRAND.name}</p>
           <p className="mt-3 max-w-md text-fantasy-200/75">{BRAND.subtitle}</p>
-          <MagneticButton
-            className="mt-6"
-            onClick={() => {
-              document.querySelector("#top")?.scrollIntoView({ behavior: "smooth" });
-            }}
-          >
+          <MagneticButton className="mt-6" onClick={() => router.push("/book")}>
             Start a Project
           </MagneticButton>
         </div>
@@ -26,9 +32,9 @@ export function SiteFooter() {
           <ul className="space-y-2">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
-                <a href={link.href} className="text-fantasy-200/80 transition hover:text-rose-300">
+                <Link href={link.href} className="text-fantasy-200/80 transition hover:text-rose-300">
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -38,10 +44,20 @@ export function SiteFooter() {
           <p className="type-overline mb-4 text-rose-300">Connect</p>
           <ul className="space-y-2 text-fantasy-200/80">
             <li>
-              <a href={`mailto:${BRAND.email}`} className="hover:text-rose-300">
-                {BRAND.email}
+              <a href={`mailto:${contactEmail}`} className="hover:text-rose-300">
+                {contactEmail}
               </a>
             </li>
+            {contactPhone ? (
+              <li>
+                <a
+                  href={`tel:${contactPhone.replace(/\s+/g, "")}`}
+                  className="hover:text-rose-300"
+                >
+                  {contactPhone}
+                </a>
+              </li>
+            ) : null}
             <li>
               <a href={BRAND.socials.linkedin} className="hover:text-rose-300">
                 LinkedIn

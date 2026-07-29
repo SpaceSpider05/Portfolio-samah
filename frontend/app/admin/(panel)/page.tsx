@@ -9,9 +9,8 @@ export const metadata: Metadata = {
 
 const quickLinks = [
   { href: "/admin/projects", label: "Projects" },
+  { href: "/admin/services", label: "Services" },
   { href: "/admin/bookings", label: "Bookings" },
-  { href: "/admin/messages", label: "Messages" },
-  { href: "/admin/seo", label: "SEO" },
 ];
 
 export default async function AdminDashboardPage() {
@@ -21,24 +20,22 @@ export default async function AdminDashboardPage() {
     getStats(),
   ]);
 
-  const cards = [
-    { label: "Projects", value: String(projects.length) },
-    { label: "Services", value: String(services.length) },
-    {
-      label: "Clients",
-      value: `${stats.metrics.find((m) => m.id === "m2")?.value ?? 0}+`,
-    },
-    {
-      label: "Campaign reach",
-      value: `${stats.metrics.find((m) => m.id === "m3")?.value ?? 0}M+`,
-    },
-  ];
+  const cards =
+    stats.metrics.length > 0
+      ? stats.metrics.map((metric) => ({
+          label: metric.label,
+          value: `${metric.prefix ?? ""}${metric.value}${metric.suffix}`,
+        }))
+      : [
+          { label: "Projects", value: String(projects.length) },
+          { label: "Services", value: String(services.length) },
+        ];
 
   return (
     <div>
       <AdminPageHeader
         title="Dashboard"
-        description="Overview of portfolio content, performance, and inbound activity."
+        description="Overview of portfolio content, services, and inbound bookings."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -76,7 +73,7 @@ export default async function AdminDashboardPage() {
 
         <AdminCard>
           <p className="type-overline mb-4">Quick links</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {quickLinks.map((link) => (
               <Link
                 key={link.href}
@@ -88,7 +85,7 @@ export default async function AdminDashboardPage() {
             ))}
           </div>
           <p className="mt-6 text-xs text-silver-400">
-            Auth is mock-based for now. Wire Laravel Sanctum/API later via `NEXT_PUBLIC_API_URL`.
+            Signed in with Laravel Sanctum. Manage services and review bookings from the sidebar.
           </p>
         </AdminCard>
       </div>

@@ -29,6 +29,13 @@ export type Service = {
   description: string;
   hoverDemo: "seo" | "social" | "ads";
   cta: string;
+  isPublished?: boolean;
+  sortOrder?: number;
+};
+
+export type ProjectGalleryImage = {
+  path: string;
+  description: string;
 };
 
 export type Project = {
@@ -43,7 +50,11 @@ export type Project = {
   results: string[];
   technologies: string[];
   coverImage: string;
-  videoPreview?: string;
+  galleryImages?: ProjectGalleryImage[];
+  videoPreview?: string | null;
+  isPublished?: boolean;
+  status?: "draft" | "in_progress" | "completed";
+  sortOrder?: number;
 };
 
 export type StatMetric = {
@@ -62,4 +73,19 @@ export type ChartPoint = {
 export type StatsContent = {
   metrics: StatMetric[];
   chart: ChartPoint[];
+};
+
+export type SiteSettings = {
+  contactEmail: string;
+  contactPhone: string | null;
+  bookingNotifyEmail: string;
+  mailFromName: string | null;
+};
+
+export type AdminAccount = {
+  id: number;
+  name: string;
+  email: string;
+  isAdmin: boolean;
+  message?: string;
 };

@@ -23,6 +23,8 @@ class ServiceResource extends JsonResource
             'description' => $this->description,
             'hoverDemo' => $this->hover_demo,
             'cta' => $this->cta,
+            'isPublished' => (bool) $this->is_published,
+            'sortOrder' => (int) $this->sort_order,
         ];
     }
 }

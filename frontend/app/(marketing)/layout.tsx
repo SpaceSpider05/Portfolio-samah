@@ -4,17 +4,26 @@ import { MarketingThemeLock } from "@/components/providers/marketing-theme-lock"
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
+import { HashScrollHandler } from "@/components/layout/hash-scroll-handler";
 import { BRAND } from "@/constants/brand";
+import { getSiteSettings } from "@/services/api";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-export default function MarketingLayout({ children }: { children: ReactNode }) {
+export default async function MarketingLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const siteSettings = await getSiteSettings();
+  const contactEmail = siteSettings.contactEmail || BRAND.email;
+
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: BRAND.name,
     url: siteUrl,
-    email: BRAND.email,
+    email: contactEmail,
     description: BRAND.subtitle,
     sameAs: [
       BRAND.socials.linkedin,
@@ -31,9 +40,15 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
       <AppProviders>
+        <HashScrollHandler />
         <SiteHeader />
-        <main className="relative z-10 pb-24 md:pb-0">{children}</main>
-        <SiteFooter />
+        <main className="relative z-10 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
+          {children}
+        </main>
+        <SiteFooter
+          contactEmail={contactEmail}
+          contactPhone={siteSettings.contactPhone ?? BRAND.phone}
+        />
         <MobileBottomNav />
       </AppProviders>
     </div>

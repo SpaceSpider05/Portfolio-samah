@@ -42,6 +42,11 @@ export const MagneticButton = forwardRef<HTMLButtonElement, MagneticButtonProps>
     };
 
     const handleMove = (event: MouseEvent<HTMLButtonElement>) => {
+      if (window.matchMedia("(pointer: coarse)").matches) {
+        onMouseMove?.(event);
+        return;
+      }
+
       const el = localRef.current;
       if (!el) {
         return;

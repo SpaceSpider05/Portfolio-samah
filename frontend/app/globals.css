@@ -248,10 +248,10 @@
   }
 
   .cursor-none-desktop {
-    cursor: none;
+    cursor: auto;
   }
 
-  @media (pointer: fine) {
+  @media (pointer: fine) and (min-width: 1024px) {
     .cursor-none-desktop:not(.modal-open),
     .cursor-none-desktop:not(.modal-open) * {
       cursor: none !important;
@@ -332,13 +332,19 @@
   }
 
   .glass-panel {
-    background: var(--card);
+    background: color-mix(in oklab, var(--tobago-600) 92%, var(--vanilla-200) 8%);
     border: 1px solid var(--border);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
     box-shadow:
       0 1px 0 color-mix(in oklab, var(--fantasy-200) 8%, transparent) inset,
       0 20px 50px color-mix(in oklab, var(--tobago-900) 35%, transparent);
+  }
+
+  @media (min-width: 768px) {
+    .glass-panel {
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
   }
 
   .aurora-bg {
@@ -381,15 +387,46 @@
     transform: translate3d(0, 0, 0) scale(1);
   }
   33% {
-    transform: translate3d(4%, -6%, 0) scale(1.08);
+    transform: translate3d(3%, -4%, 0) scale(1.05);
   }
   66% {
-    transform: translate3d(-5%, 4%, 0) scale(0.95);
+    transform: translate3d(-3%, 3%, 0) scale(0.97);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .aurora-blob {
+    animation: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .aurora-blob,
+  .noise-overlay {
+    display: none !important;
+  }
+}
+
+@keyframes hero-bar-pulse {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.92);
+  }
+}
+
+.hero-bar {
+  animation: hero-bar-pulse 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob {
+    animation: none;
+  }
+
+  .hero-bar {
     animation: none;
   }
 }

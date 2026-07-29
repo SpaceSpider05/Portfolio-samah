@@ -14,15 +14,23 @@ export default async function HomePage() {
     getStats(),
   ]);
 
+  const featuredProjects = [...projects]
+    .sort((a, b) => Number(b.id) - Number(a.id))
+    .slice(0, 3);
+
+  const featuredServices = [...services]
+    .sort((a, b) => Number(b.id) - Number(a.id))
+    .slice(0, 3);
+
   return (
     <>
       <HeroSection />
       <SectionDivider />
       <AboutSection about={about} />
       <SectionDivider />
-      <ServicesSection services={services} />
+      <ServicesSection services={featuredServices} />
       <SectionDivider />
-      <PortfolioSection projects={projects} />
+      <PortfolioSection projects={featuredProjects} />
       <SectionDivider />
       <StatsSection stats={stats} />
     </>

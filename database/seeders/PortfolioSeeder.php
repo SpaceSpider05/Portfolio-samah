@@ -106,6 +106,7 @@ class PortfolioSeeder extends Seeder
                 'cover_image' => '/images/project-lumen.svg',
                 'video_preview' => null,
                 'is_published' => true,
+                'status' => 'completed',
                 'sort_order' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -123,6 +124,7 @@ class PortfolioSeeder extends Seeder
                 'cover_image' => '/images/project-northline.svg',
                 'video_preview' => null,
                 'is_published' => true,
+                'status' => 'completed',
                 'sort_order' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -140,13 +142,14 @@ class PortfolioSeeder extends Seeder
                 'cover_image' => '/images/project-atelier.svg',
                 'video_preview' => null,
                 'is_published' => true,
+                'status' => 'completed',
                 'sort_order' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
         ], ['slug'], [
             'title', 'client', 'category', 'summary', 'challenge', 'solution', 'results',
-            'technologies', 'cover_image', 'video_preview', 'is_published', 'sort_order', 'updated_at',
+            'technologies', 'cover_image', 'video_preview', 'is_published', 'status', 'sort_order', 'updated_at',
         ]);
 
         SiteMetric::query()->delete();

@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
     'service',
     'business_type',
     'goals',
-    'budget',
     'scheduled_at',
     'name',
     'email',

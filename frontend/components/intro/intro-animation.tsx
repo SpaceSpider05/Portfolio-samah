@@ -1,24 +1,42 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { BRAND } from "@/constants/brand";
 import { gsap, registerGsap, useGSAP } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/lib/motion";
 import { useUiStore } from "@/stores/ui-store";
 
+const INTRO_SEEN_KEY = "samah-intro-seen";
+
 export function IntroAnimation() {
+  const pathname = usePathname();
   const rootRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
-  const particlesRef = useRef<HTMLDivElement>(null);
   const setIntroComplete = useUiStore((s) => s.setIntroComplete);
   const introComplete = useUiStore((s) => s.introComplete);
 
   registerGsap();
 
   const finish = () => {
+    try {
+      sessionStorage.setItem(INTRO_SEEN_KEY, "1");
+    } catch {
+      // ignore
+    }
     setIntroComplete(true);
     document.documentElement.classList.remove("overflow-hidden");
   };
+
+  useEffect(() => {
+    const seen =
+      typeof window !== "undefined" &&
+      sessionStorage.getItem(INTRO_SEEN_KEY) === "1";
+
+    if (pathname !== "/" || seen || prefersReducedMotion()) {
+      finish();
+    }
+  }, [pathname]);
 
   useEffect(() => {
     if (!introComplete) {
@@ -28,16 +46,10 @@ export function IntroAnimation() {
 
   useGSAP(
     () => {
-      if (introComplete) {
+      if (introComplete || pathname !== "/") {
         return;
       }
 
-      if (prefersReducedMotion()) {
-        finish();
-        return;
-      }
-
-      const particles = particlesRef.current?.querySelectorAll(".particle");
       const tl = gsap.timeline({
         defaults: { ease: "power2.out" },
         onComplete: finish,
@@ -45,35 +57,21 @@ export function IntroAnimation() {
 
       tl.fromTo(
         logoRef.current,
-        { opacity: 0, scale: 0.85, filter: "blur(8px)" },
-        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.7 },
+        { opacity: 0, scale: 0.92, y: 12 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.55 },
       )
         .to(logoRef.current, {
           opacity: 0,
-          scale: 1.15,
-          filter: "blur(4px)",
-          duration: 0.35,
-          delay: 0.25,
+          y: -10,
+          duration: 0.3,
+          delay: 0.2,
         })
-        .fromTo(
-          particles ?? [],
-          { opacity: 1, scale: 0, x: 0, y: 0 },
-          {
-            opacity: 0,
-            scale: 1,
-            duration: 0.9,
-            stagger: 0.01,
-            x: () => gsap.utils.random(-220, 220),
-            y: () => gsap.utils.random(-160, 160),
-          },
-          "-=0.2",
-        )
-        .to(rootRef.current, { opacity: 0, duration: 0.45 }, "-=0.2");
+        .to(rootRef.current, { opacity: 0, duration: 0.35 }, "-=0.1");
     },
-    { scope: rootRef, dependencies: [introComplete] },
+    { scope: rootRef, dependencies: [introComplete, pathname] },
   );
 
-  if (introComplete) {
+  if (introComplete || pathname !== "/") {
     return null;
   }
 
@@ -92,22 +90,9 @@ export function IntroAnimation() {
         Skip
       </button>
 
-      <div
-        ref={logoRef}
-        className="relative text-center"
-        style={{ textShadow: "0 0 40px color-mix(in oklab, #DBA1A2 55%, transparent)" }}
-      >
+      <div ref={logoRef} className="relative text-center">
         <p className="type-overline mb-3 text-rose-300">Digital Studio</p>
         <p className="font-display text-5xl text-fantasy-100 md:text-7xl">{BRAND.name}</p>
-      </div>
-
-      <div ref={particlesRef} className="pointer-events-none absolute inset-0" aria-hidden>
-        {Array.from({ length: 28 }).map((_, index) => (
-          <span
-            key={index}
-            className="particle absolute left-1/2 top-1/2 h-1.5 w-1.5 rounded-full bg-rose-300"
-          />
-        ))}
       </div>
     </div>
   );

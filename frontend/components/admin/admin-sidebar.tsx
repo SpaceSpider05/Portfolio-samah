@@ -4,21 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import {
-  BarChart3,
-  Bot,
   Briefcase,
   CalendarDays,
-  Images,
   Layers,
   LayoutDashboard,
-  LineChart,
   LogOut,
-  Mail,
   Menu,
   Moon,
-  Newspaper,
-  Quote,
-  Search,
   Settings,
   Sun,
   X,
@@ -32,17 +24,9 @@ import { cn } from "@/lib/utils";
 const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   LayoutDashboard,
   Briefcase,
-  Newspaper,
   Layers,
-  BarChart3,
-  Quote,
-  Mail,
   CalendarDays,
-  Bot,
-  Images,
-  LineChart,
   Settings,
-  Search,
 };
 
 export function AdminSidebar() {
@@ -83,6 +67,7 @@ export function AdminSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch
               onClick={() => setOpen(false)}
               className={cn(
                 "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition",

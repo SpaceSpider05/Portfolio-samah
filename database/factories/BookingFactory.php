@@ -11,14 +11,24 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class BookingFactory extends Factory
 {
     /**
-     * Define the model's default state.
-     *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
         return [
-            //
+            'service' => fake()->randomElement([
+                'SEO Growth Systems',
+                'Social Content Engines',
+                'Paid Acquisition',
+            ]),
+            'business_type' => fake()->randomElement(['SaaS', 'E-commerce', 'Agency', 'Local business']),
+            'goals' => [fake()->sentence(3), fake()->sentence(4)],
+            'scheduled_at' => null,
+            'name' => fake()->name(),
+            'email' => fake()->safeEmail(),
+            'phone' => fake()->e164PhoneNumber(),
+            'status' => 'pending',
+            'notes' => fake()->paragraph(),
         ];
     }
 }

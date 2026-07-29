@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\StoreServiceRequest;
+use App\Http\Requests\Api\V1\UpdateServiceRequest;
 use App\Http\Resources\Api\V1\ServiceResource;
 use App\Models\Service;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
@@ -32,17 +34,9 @@ class ServiceController extends Controller
         return ServiceResource::collection($services);
     }
 
-    public function store(Request $request): ServiceResource
+    public function store(StoreServiceRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'slug' => ['required', 'string', 'max:255', 'unique:services,slug'],
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'hoverDemo' => ['required', 'in:seo,social,ads'],
-            'cta' => ['required', 'string', 'max:255'],
-            'isPublished' => ['boolean'],
-            'sortOrder' => ['integer', 'min:0'],
-        ]);
+        $validated = $request->validated();
 
         $service = Service::query()->create([
             'slug' => $validated['slug'],
@@ -54,20 +48,14 @@ class ServiceController extends Controller
             'sort_order' => $validated['sortOrder'] ?? 0,
         ]);
 
-        return new ServiceResource($service);
+        return (new ServiceResource($service))
+            ->response()
+            ->setStatusCode(201);
     }
 
-    public function update(Request $request, Service $service): ServiceResource
+    public function update(UpdateServiceRequest $request, Service $service): ServiceResource
     {
-        $validated = $request->validate([
-            'slug' => ['sometimes', 'string', 'max:255', 'unique:services,slug,'.$service->id],
-            'title' => ['sometimes', 'string', 'max:255'],
-            'description' => ['sometimes', 'string'],
-            'hoverDemo' => ['sometimes', 'in:seo,social,ads'],
-            'cta' => ['sometimes', 'string', 'max:255'],
-            'isPublished' => ['boolean'],
-            'sortOrder' => ['integer', 'min:0'],
-        ]);
+        $validated = $request->validated();
 
         $service->update([
             'slug' => $validated['slug'] ?? $service->slug,
@@ -75,11 +63,13 @@ class ServiceController extends Controller
             'description' => $validated['description'] ?? $service->description,
             'hover_demo' => $validated['hoverDemo'] ?? $service->hover_demo,
             'cta' => $validated['cta'] ?? $service->cta,
-            'is_published' => $validated['isPublished'] ?? $service->is_published,
+            'is_published' => array_key_exists('isPublished', $validated)
+                ? $validated['isPublished']
+                : $service->is_published,
             'sort_order' => $validated['sortOrder'] ?? $service->sort_order,
         ]);
 
-        return new ServiceResource($service);
+        return new ServiceResource($service->refresh());
     }
 
     public function destroy(Service $service): Response

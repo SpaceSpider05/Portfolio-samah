@@ -1,3 +1,19 @@
+export class ApiError extends Error {
+  status: number;
+  errors: Record<string, string[]>;
+
+  constructor(
+    message: string,
+    status: number,
+    errors: Record<string, string[]> = {},
+  ) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.errors = errors;
+  }
+}
+
 type RequestOptions = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
@@ -48,15 +64,24 @@ export async function apiClient<T>(
 
   if (!response.ok) {
     let message = `API ${response.status}: ${path}`;
+    let errors: Record<string, string[]> = {};
+
     try {
-      const payload = (await response.json()) as { message?: string };
+      const payload = (await response.json()) as {
+        message?: string;
+        errors?: Record<string, string[]>;
+      };
       if (payload.message) {
         message = payload.message;
+      }
+      if (payload.errors) {
+        errors = payload.errors;
       }
     } catch {
       // ignore parse errors
     }
-    throw new Error(message);
+
+    throw new ApiError(message, response.status, errors);
   }
 
   if (response.status === 204) {

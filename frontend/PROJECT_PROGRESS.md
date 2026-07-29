@@ -48,8 +48,14 @@ frontend/
 - [x] Portfolio grid + Framer Motion case-study modal
 - [x] Statistics counters + chart draw
 - [x] Admin console: login, sidebar nav, dashboard + module pages (mock auth)
+- [x] Admin sidebar trimmed to Dashboard, Projects, Services, Bookings (+ Dark Mode)
+- [x] Admin Projects CRUD (create / edit / delete) wired to Laravel
+- [x] Performance pass: lighter mobile gfx, no hero Three.js, Lenis desktop-only, lighter intro
 - [x] Admin login authenticated by **Laravel Sanctum** (Next only proxies + stores httpOnly session cookie)
 - [x] Next.js wired to `NEXT_PUBLIC_API_URL` (mock fallback still available)
+- [x] Public booking page (`/book`) with name, email, phone, service, notes
+- [x] Laravel `POST /api/v1/bookings` + confirmation email to customer (+ admin notify)
+- [x] Admin Services: create/list/delete wired to Laravel CRUD
 
 ## Features In Progress
 
@@ -59,10 +65,9 @@ frontend/
 
 - Industries, Case Studies page, Testimonials, Process timeline
 - AI Marketing Assistant
-- Multi-step Booking wizard
 - Blog preview (WordPress/Laravel-fed)
 - FAQ, Contact map + live availability
-- Wire mock API to real Laravel REST endpoints
+- Admin bookings UI wired to `/api/v1/manage/bookings`
 
 ## Technical Decisions
 
@@ -117,7 +122,7 @@ frontend/
 ### 2026-07-26 — Admin console shell
 
 - Added `/admin/login` with cookie session middleware guard
-- Admin sidebar: Dashboard, Projects, Blogs, Services, Statistics, Testimonials, Messages, Bookings, AI Conversations, Gallery, Analytics, Settings, SEO, Dark Mode
+- Admin sidebar: Dashboard, Projects, Services, Bookings, Dark Mode
 - Dashboard/Projects/Services/Statistics wired to mock API; other modules are ready shells
 - Demo credentials via `NEXT_PUBLIC_ADMIN_EMAIL` / `NEXT_PUBLIC_ADMIN_PASSWORD`
 
