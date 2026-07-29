@@ -53,6 +53,8 @@ Default seeded admin (change after first login):
 
 Samah AI setup details: see [`docs/SAMAH_AI.md`](docs/SAMAH_AI.md).
 
+**Production install:** see [`devops/README.md`](devops/README.md) (env templates, Nginx, systemd, install/deploy scripts).
+
 ### 2. Frontend (Next.js)
 
 ```bash

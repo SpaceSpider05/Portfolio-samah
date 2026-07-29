@@ -1,0 +1,18 @@
+[Unit]
+Description=Samah Next.js frontend
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=3
+WorkingDirectory=/var/www/Prt-Samah/frontend
+Environment=NODE_ENV=production
+Environment=PORT=3000
+ExecStart=/usr/bin/npm run start
+Nice=5
+
+[Install]
+WantedBy=multi-user.target
