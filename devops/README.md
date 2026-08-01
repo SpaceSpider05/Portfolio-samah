@@ -7,6 +7,7 @@ Everything you need to install and run **Prt-Samah** (Laravel API + Next.js fron
 | Path | Purpose |
 |------|---------|
 | [FROM_DOMAIN_TO_VPS.md](./FROM_DOMAIN_TO_VPS.md) | Buy domain (`growwithsamah.com`) + VPS → DNS → go-live |
+| [VPS_COMMANDS.md](./VPS_COMMANDS.md) | Copy-paste commands for server `45.13.237.139` |
 | [PRODUCTION_INSTALL.md](./PRODUCTION_INSTALL.md) | Full production install guide |
 | [CHECKLIST.md](./CHECKLIST.md) | Go-live checklist |
 | [env/laravel.production.example](./env/laravel.production.example) | Laravel `.env` template (no secrets) |
