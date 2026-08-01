@@ -5,7 +5,7 @@ export const LANDING = {
     headline:
       "Helping brands grow with strategic digital marketing that delivers measurable results.",
     description:
-      "I help businesses increase visibility, attract qualified leads, and grow online using SEO, content strategy, paid advertising, and performance-driven marketing.",
+      "I help businesses increase visibility, attract qualified leads, and grow online with SEO, content strategy, Meta & Google ads, and performance-driven marketing systems.",
     primaryCta: "Book a Free Consultation",
     secondaryCta: "View My Work",
   },
@@ -161,38 +161,6 @@ export const LANDING = {
       name: "ChatGPT",
       purpose: "Accelerate research, briefs, and first-draft content.",
       icon: "ChatGPT",
-    },
-  ],
-  certifications: [
-    { name: "Google", detail: "Digital Marketing & Ads fundamentals" },
-    { name: "Meta", detail: "Blueprint advertising readiness" },
-    { name: "HubSpot", detail: "Inbound & content marketing" },
-    { name: "Semrush", detail: "SEO toolkit proficiency" },
-  ],
-  testimonials: [
-    {
-      quote:
-        "Samah rebuilt our funnel clarity. Traffic quality improved and demos finally felt predictable.",
-      name: "Lina Mansouri",
-      role: "Founder",
-      company: "Atelier Maison",
-      rating: 5,
-    },
-    {
-      quote:
-        "Clear strategy, fast execution, and reporting we could actually use in weekly decisions.",
-      name: "Omar Benali",
-      role: "Growth Lead",
-      company: "Northline",
-      rating: 5,
-    },
-    {
-      quote:
-        "She doesn’t sell buzzwords. She ships systems that compound.",
-      name: "Sara El Amrani",
-      role: "Marketing Director",
-      company: "Lumen Co.",
-      rating: 5,
     },
   ],
   faq: [

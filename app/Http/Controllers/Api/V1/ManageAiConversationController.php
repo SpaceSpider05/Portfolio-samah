@@ -17,6 +17,23 @@ class ManageAiConversationController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $conversations = AiConversation::query()
+            ->select([
+                'id',
+                'session_id',
+                'locale',
+                'visitor_name',
+                'visitor_email',
+                'status',
+                'message_count',
+                'preview',
+                'booking_id',
+                'visitor_profile',
+                'lead_payload',
+                'summary',
+                'follow_up_sent_at',
+                'last_message_at',
+                'created_at',
+            ])
             ->latest('last_message_at')
             ->latest('id')
             ->get();

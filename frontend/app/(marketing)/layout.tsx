@@ -7,9 +7,8 @@ import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { HashScrollHandler } from "@/components/layout/hash-scroll-handler";
 import { ActiveSectionTracker } from "@/components/layout/active-section-tracker";
 import { BRAND } from "@/constants/brand";
+import { SEO, absoluteUrl } from "@/constants/seo";
 import { getSiteSettings } from "@/services/api";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export default async function MarketingLayout({
   children,
@@ -18,19 +17,52 @@ export default async function MarketingLayout({
 }) {
   const siteSettings = await getSiteSettings();
   const contactEmail = siteSettings.contactEmail || BRAND.email;
+  const contactPhone = siteSettings.contactPhone ?? BRAND.phone;
 
   const organizationJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "ProfessionalService",
     name: BRAND.name,
-    url: siteUrl,
+    alternateName: "Grow with Samah",
+    url: SEO.siteUrl,
     email: contactEmail,
-    description: BRAND.subtitle,
+    telephone: contactPhone || undefined,
+    description: SEO.description,
+    image: absoluteUrl("/opengraph-image"),
+    areaServed: "Worldwide",
+    priceRange: "$$",
     sameAs: [
       BRAND.socials.linkedin,
       BRAND.socials.instagram,
       BRAND.socials.telegram,
-    ],
+    ].filter(Boolean),
+    founder: {
+      "@type": "Person",
+      name: BRAND.name,
+      jobTitle: "Digital Marketing Strategist",
+      url: SEO.siteUrl,
+      sameAs: [BRAND.socials.linkedin, BRAND.socials.instagram],
+    },
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      email: contactEmail,
+      telephone: contactPhone || undefined,
+      availableLanguage: ["English", "French", "Arabic"],
+    },
+  };
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: BRAND.name,
+    alternateName: "Grow with Samah",
+    url: SEO.siteUrl,
+    description: SEO.description,
+    publisher: {
+      "@type": "Person",
+      name: BRAND.name,
+    },
   };
 
   return (
@@ -40,6 +72,10 @@ export default async function MarketingLayout({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
       <AppProviders>
         <HashScrollHandler />
         <ActiveSectionTracker />
@@ -47,10 +83,7 @@ export default async function MarketingLayout({
         <main className="relative z-10 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
           {children}
         </main>
-        <SiteFooter
-          contactEmail={contactEmail}
-          contactPhone={siteSettings.contactPhone ?? BRAND.phone}
-        />
+        <SiteFooter contactEmail={contactEmail} contactPhone={contactPhone} />
         <MobileBottomNav />
       </AppProviders>
     </div>

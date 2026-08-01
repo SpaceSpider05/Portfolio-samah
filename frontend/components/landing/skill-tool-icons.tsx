@@ -2,7 +2,6 @@ import type { ComponentType, ReactNode } from "react";
 import {
   AhrefsIcon,
   CanvaIcon,
-  GoogleIcon,
   HubSpotIcon,
   MetaIcon,
   SemrushIcon,
@@ -123,7 +122,6 @@ export const SKILL_ICONS = {
   Looker: LookerIcon,
   CapCut: CapCutIcon,
   ChatGPT: ChatGPTIcon,
-  Google: GoogleIcon,
 } as const;
 
 export type SkillIconKey = keyof typeof SKILL_ICONS;

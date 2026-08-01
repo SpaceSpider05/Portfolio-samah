@@ -45,26 +45,9 @@ class AiConversationResource extends JsonResource
         if ($this->withMessages) {
             $payload['messages'] = is_array($this->messages) ? array_values($this->messages) : [];
         } else {
-            $payload['preview'] = $this->previewText();
+            $payload['preview'] = $this->preview;
         }
 
         return $payload;
-    }
-
-    private function previewText(): ?string
-    {
-        $messages = is_array($this->messages) ? $this->messages : [];
-
-        for ($i = count($messages) - 1; $i >= 0; $i--) {
-            $message = $messages[$i];
-            if (! is_array($message)) {
-                continue;
-            }
-            if (($message['role'] ?? null) === 'user' && is_string($message['content'] ?? null)) {
-                return mb_substr(trim($message['content']), 0, 140);
-            }
-        }
-
-        return null;
     }
 }

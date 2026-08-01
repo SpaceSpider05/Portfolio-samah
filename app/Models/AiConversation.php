@@ -27,6 +27,7 @@ class AiConversation extends Model
         'summary',
         'follow_up_sent_at',
         'message_count',
+        'preview',
         'booking_id',
         'status',
         'last_message_at',

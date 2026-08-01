@@ -2,7 +2,7 @@ APP_NAME=GrowWithSamah
 APP_ENV=production
 APP_KEY=
 APP_DEBUG=false
-APP_URL=https://api.your-domain.com
+APP_URL=https://api.growwithsamah.com
 
 APP_LOCALE=en
 APP_FALLBACK_LOCALE=en
@@ -28,7 +28,7 @@ SESSION_DRIVER=database
 SESSION_LIFETIME=120
 SESSION_ENCRYPT=true
 SESSION_PATH=/
-SESSION_DOMAIN=.your-domain.com
+SESSION_DOMAIN=.growwithsamah.com
 
 BROADCAST_CONNECTION=log
 FILESYSTEM_DISK=public
@@ -46,7 +46,7 @@ MAIL_FROM_ADDRESS=
 MAIL_FROM_NAME="${APP_NAME}"
 MAIL_ADMIN_ADDRESS=
 
-FRONTEND_URL=https://your-domain.com
+FRONTEND_URL=https://growwithsamah.com
 
 # Samah AI
 AI_ENABLED=true

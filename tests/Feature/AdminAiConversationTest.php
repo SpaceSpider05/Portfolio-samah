@@ -29,14 +29,19 @@ it('lists AI conversations for admins', function (): void {
             ['role' => 'user', 'content' => 'Hi, I need SEO help'],
             ['role' => 'assistant', 'content' => 'Happy to help — what’s your name?'],
         ],
+        'preview' => 'Hi, I need SEO help',
         'message_count' => 2,
     ]);
 
-    test()->withToken(adminToken())
+    $payload = test()->withToken(adminToken())
         ->getJson('/api/v1/manage/ai-conversations')
         ->assertOk()
         ->assertJsonFragment(['visitorName' => 'Sara'])
-        ->assertJsonFragment(['visitorEmail' => 'sara@example.com']);
+        ->assertJsonFragment(['visitorEmail' => 'sara@example.com'])
+        ->assertJsonFragment(['preview' => 'Hi, I need SEO help'])
+        ->json('0');
+
+    expect($payload)->not->toHaveKey('messages');
 });
 
 it('shows a full transcript for admins', function (): void {

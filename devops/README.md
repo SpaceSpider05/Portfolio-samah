@@ -6,6 +6,7 @@ Everything you need to install and run **Prt-Samah** (Laravel API + Next.js fron
 
 | Path | Purpose |
 |------|---------|
+| [FROM_DOMAIN_TO_VPS.md](./FROM_DOMAIN_TO_VPS.md) | Buy domain (`growwithsamah.com`) + VPS → DNS → go-live |
 | [PRODUCTION_INSTALL.md](./PRODUCTION_INSTALL.md) | Full production install guide |
 | [CHECKLIST.md](./CHECKLIST.md) | Go-live checklist |
 | [env/laravel.production.example](./env/laravel.production.example) | Laravel `.env` template (no secrets) |
@@ -22,14 +23,15 @@ Everything you need to install and run **Prt-Samah** (Laravel API + Next.js fron
 ```
 Internet
    │
-   ├─ https://your-domain.com      → Nginx → Next.js (port 3000)
-   └─ https://api.your-domain.com  → Nginx → PHP-FPM (Laravel public/)
+   ├─ https://growwithsamah.com      → Nginx → Next.js (port 3000)
+   └─ https://api.growwithsamah.com  → Nginx → PHP-FPM (Laravel public/)
                                            └─ queue worker (systemd)
 ```
 
 ## Quick start
 
-On a fresh Ubuntu/Debian server (as deploy user with sudo):
+1. Follow **[FROM_DOMAIN_TO_VPS.md](./FROM_DOMAIN_TO_VPS.md)** (domain + VPS + DNS).
+2. On the server, install the app:
 
 ```bash
 cd /var/www
@@ -37,11 +39,11 @@ git clone <YOUR_REPO_URL> Prt-Samah
 cd Prt-Samah
 cp devops/env/laravel.production.example .env
 cp devops/env/frontend.production.example frontend/.env.production.local
-# Edit both files with real secrets/domains
+# Edit both files with growwithsamah.com + secrets
 bash devops/scripts/install-prod.sh
 ```
 
-Then install Nginx + systemd units from `devops/nginx` and `devops/systemd` (paths inside those files).
+Then install Nginx + systemd units from `devops/nginx` and `devops/systemd` (see FROM_DOMAIN_TO_VPS + PRODUCTION_INSTALL).
 
 ## Never commit
 

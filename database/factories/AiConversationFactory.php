@@ -27,6 +27,7 @@ class AiConversationFactory extends Factory
             'lead_payload' => null,
             'visitor_profile' => [],
             'summary' => null,
+            'preview' => null,
             'follow_up_sent_at' => null,
             'message_count' => 0,
             'status' => 'active',

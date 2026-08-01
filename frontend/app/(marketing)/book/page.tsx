@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { BRAND } from "@/constants/brand";
+import { SEO, pageMetadata } from "@/constants/seo";
 import { getServices } from "@/services/api";
 import { BookingForm } from "@/components/booking/booking-form";
 import { GlassPanel } from "@/components/ui/glass-panel";
 
-export const metadata: Metadata = {
-  title: "Book a consultation",
-  description: `Book ${BRAND.name}'s digital marketing services. Confirmation arrives by email.`,
-  alternates: { canonical: "/book" },
-};
+export const metadata: Metadata = pageMetadata(SEO.pages.book);
 
 export default async function BookPage() {
   const services = await getServices();
@@ -20,9 +17,9 @@ export default async function BookPage() {
 
       <div className="mb-10 max-w-2xl">
         <p className="type-overline text-rose-300">Book services</p>
-        <h1 className="type-h1 mt-3">{BRAND.name}</h1>
+        <h1 className="type-h1 mt-3">Book a free consultation</h1>
         <p className="type-subheading mt-4 text-heading-soft">
-          Tell us what you need. We’ll confirm by email and follow up with next steps.
+          Tell {BRAND.name} what you need. We’ll confirm by email and follow up with next steps.
         </p>
       </div>
 

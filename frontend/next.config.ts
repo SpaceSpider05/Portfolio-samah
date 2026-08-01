@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ["lucide-react", "gsap"],
+    optimizePackageImports: ["lucide-react", "gsap", "framer-motion"],
   },
   turbopack: {
     root: path.join(__dirname),

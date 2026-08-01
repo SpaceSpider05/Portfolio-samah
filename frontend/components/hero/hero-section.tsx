@@ -1,10 +1,15 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import type { AboutContent, StatsContent } from "@/types";
 import { LANDING } from "@/constants/landing";
 import { MagneticButton } from "@/components/ui/magnetic-button";
-import { HeroGlobe } from "@/components/hero/hero-globe";
+
+const HeroGlobe = dynamic(
+  () => import("@/components/hero/hero-globe").then((mod) => mod.HeroGlobe),
+  { ssr: false },
+);
 
 type HeroSectionProps = {
   about: AboutContent;

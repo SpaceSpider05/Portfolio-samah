@@ -26,10 +26,28 @@ export async function generateMetadata({
     return { title: "Project" };
   }
 
+  const title = `${project.title} — ${project.category}`;
+  const description = project.summary;
+  const path = `/portfolio/${project.slug}`;
+
   return {
-    title: project.title,
-    description: project.summary,
-    alternates: { canonical: `/portfolio/${project.slug}` },
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      title,
+      description,
+      url: path,
+      type: "article",
+      images: project.coverImage
+        ? [{ url: project.coverImage, alt: project.title }]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 

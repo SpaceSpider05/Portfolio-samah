@@ -1,9 +1,12 @@
 # Production go-live checklist
 
+Start here for buying **growwithsamah.com** + a VPS + DNS: [FROM_DOMAIN_TO_VPS.md](./FROM_DOMAIN_TO_VPS.md).
+
 ## Before deploy
 
-- [ ] Domains ready (`your-domain.com`, `api.your-domain.com`)
-- [ ] DNS A/AAAA records pointed at the server
+- [ ] Domain owned: `growwithsamah.com`
+- [ ] Hosts ready: `growwithsamah.com`, `www.growwithsamah.com`, `api.growwithsamah.com`
+- [ ] DNS A/AAAA records pointed at the VPS
 - [ ] MySQL database + user created
 - [ ] SMTP credentials tested
 - [ ] Groq API key created (for Samah AI)

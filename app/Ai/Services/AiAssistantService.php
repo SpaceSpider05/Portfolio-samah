@@ -205,6 +205,7 @@ class AiAssistantService
         $conversation->messages = $history;
         $conversation->locale = $locale;
         $conversation->message_count = count($history);
+        $conversation->preview = $this->previewFromHistory($history);
         $conversation->last_message_at = now();
         $conversation->save();
 
@@ -245,6 +246,28 @@ class AiAssistantService
         }
 
         return $normalized;
+    }
+
+    /**
+     * @param  list<array{role: string, content: string}>  $history
+     */
+    private function previewFromHistory(array $history): ?string
+    {
+        for ($i = count($history) - 1; $i >= 0; $i--) {
+            if (($history[$i]['role'] ?? null) !== 'user') {
+                continue;
+            }
+
+            $content = trim((string) ($history[$i]['content'] ?? ''));
+
+            if ($content === '') {
+                continue;
+            }
+
+            return mb_substr($content, 0, 140);
+        }
+
+        return null;
     }
 
     /**

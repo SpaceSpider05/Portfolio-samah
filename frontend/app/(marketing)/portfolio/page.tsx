@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BRAND } from "@/constants/brand";
+import { SEO, pageMetadata } from "@/constants/seo";
 import { getProjects } from "@/services/api";
 import { GlassPanel } from "@/components/ui/glass-panel";
 import { ProjectBookCta } from "@/components/portfolio/project-book-cta";
 import { ProjectCoverImage } from "@/components/portfolio/project-cover-image";
 
-export const metadata: Metadata = {
-  title: "Portfolio",
-  description: `Selected digital marketing case studies by ${BRAND.name}.`,
-  alternates: { canonical: "/portfolio" },
-};
+export const metadata: Metadata = pageMetadata(SEO.pages.portfolio);
 
 export default async function PortfolioPage() {
   const projects = await getProjects();
@@ -21,7 +18,7 @@ export default async function PortfolioPage() {
 
       <div className="mb-12 max-w-2xl">
         <p className="type-overline text-rose-300">Portfolio</p>
-        <h1 className="type-h1 mt-3">{BRAND.name}</h1>
+        <h1 className="type-h1 mt-3">Selected work by {BRAND.name}</h1>
         <p className="type-subheading mt-4 text-heading-soft">
           Case studies built around measurable growth — brand, content, and acquisition.
         </p>
@@ -43,7 +40,7 @@ export default async function PortfolioPage() {
                 <div className="relative aspect-[4/5] overflow-hidden">
                   <ProjectCoverImage
                     src={project.coverImage}
-                    alt={project.title}
+                    alt={`${project.title} — ${project.category} case study for ${project.client}`}
                     className="transition duration-700 group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />

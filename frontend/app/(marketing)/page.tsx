@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { HeroSection } from "@/components/hero/hero-section";
 import { TrustBarSection } from "@/components/landing/trust-bar-section";
 import { AboutSection } from "@/components/about/about-section";
@@ -11,7 +12,15 @@ import { FaqSection } from "@/components/landing/faq-section";
 import { FinalCtaSection } from "@/components/landing/final-cta-section";
 import { ContactSection } from "@/components/landing/contact-section";
 import { SectionDivider } from "@/components/ui/section-divider";
+import { SEO, pageMetadata } from "@/constants/seo";
 import { getAbout, getProjects, getServices, getSiteSettings, getStats } from "@/services/api";
+
+export const metadata: Metadata = {
+  ...pageMetadata(SEO.pages.home),
+  title: {
+    absolute: SEO.pages.home.title,
+  },
+};
 
 export default async function HomePage() {
   const [about, services, projects, stats, siteSettings] = await Promise.all([
@@ -41,8 +50,25 @@ export default async function HomePage() {
     })
     .slice(0, 3);
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: SEO.faq.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <HeroSection about={about} stats={stats} />
       <TrustBarSection />
       <AboutSection about={about} />

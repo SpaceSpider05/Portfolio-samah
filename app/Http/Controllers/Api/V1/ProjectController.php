@@ -12,6 +12,7 @@ use App\Support\ProjectGallery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 
 class ProjectController extends Controller
 {
@@ -65,6 +66,8 @@ class ProjectController extends Controller
             'sort_order' => $validated['sortOrder'] ?? 0,
         ]);
 
+        Cache::forget('stats.public');
+
         return (new ProjectResource($project))
             ->response()
             ->setStatusCode(201);
@@ -98,12 +101,16 @@ class ProjectController extends Controller
             'sort_order' => $validated['sortOrder'] ?? $project->sort_order,
         ]);
 
+        Cache::forget('stats.public');
+
         return new ProjectResource($project->refresh());
     }
 
     public function destroy(Project $project): Response
     {
         $project->delete();
+
+        Cache::forget('stats.public');
 
         return response()->noContent();
     }

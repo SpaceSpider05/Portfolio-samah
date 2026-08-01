@@ -408,20 +408,6 @@
   }
 }
 
-@keyframes hero-bar-pulse {
-  0%,
-  100% {
-    transform: scaleY(1);
-  }
-  50% {
-    transform: scaleY(0.92);
-  }
-}
-
-.hero-bar {
-  animation: hero-bar-pulse 2.4s ease-in-out infinite;
-}
-
 @keyframes hero-float-y {
   0%,
   100% {
@@ -459,25 +445,6 @@
   }
   50% {
     transform: translate3d(-24px, 16px, 0) scale(0.94);
-  }
-}
-
-@keyframes hero-photo-bob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes hero-globe-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
   }
 }
 
@@ -548,16 +515,8 @@
   animation: hero-float-y-alt 10s ease-in-out infinite;
 }
 
-.hero-photo-float {
-  animation: hero-photo-bob 6.5s ease-in-out infinite;
-}
-
 .hero-globe-wrap {
   animation: hero-globe-bob 7s ease-in-out infinite;
-}
-
-.hero-globe-spin {
-  animation: hero-globe-spin 28s linear infinite;
 }
 
 .hero-float-badge {
@@ -606,12 +565,9 @@
     animation: none;
   }
 
-  .hero-bar,
   .hero-orb,
   .hero-ring,
-  .hero-photo-float,
   .hero-globe-wrap,
-  .hero-globe-spin,
   .hero-float-badge,
   .hero-float-a,
   .hero-float-b,

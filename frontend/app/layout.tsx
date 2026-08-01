@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Edu_VIC_WA_NT_Hand, Outfit } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { BRAND } from "@/constants/brand";
+import { SEO } from "@/constants/seo";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 
@@ -18,31 +18,50 @@ const eduHand = Edu_VIC_WA_NT_Hand({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SEO.siteUrl),
   title: {
-    default: `${BRAND.name} — Premium Digital Marketing`,
-    template: `%s · ${BRAND.name}`,
+    default: SEO.titleDefault,
+    template: SEO.titleTemplate,
   },
-  description: BRAND.subtitle,
+  description: SEO.description,
+  keywords: [...SEO.keywords],
+  authors: [{ name: SEO.siteName, url: SEO.siteUrl }],
+  creator: SEO.siteName,
+  publisher: SEO.siteName,
+  applicationName: SEO.siteName,
+  category: "marketing",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
-    locale: "en_US",
-    url: siteUrl,
-    siteName: BRAND.name,
-    title: `${BRAND.name} — Premium Digital Marketing`,
-    description: BRAND.subtitle,
+    locale: SEO.locale,
+    url: SEO.siteUrl,
+    siteName: SEO.siteName,
+    title: SEO.titleDefault,
+    description: SEO.description,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${BRAND.name} — Premium Digital Marketing`,
-    description: BRAND.subtitle,
+    title: SEO.titleDefault,
+    description: SEO.description,
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
   },
 };
 

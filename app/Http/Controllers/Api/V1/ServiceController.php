@@ -10,6 +10,7 @@ use App\Models\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 
 class ServiceController extends Controller
 {
@@ -48,6 +49,8 @@ class ServiceController extends Controller
             'sort_order' => $validated['sortOrder'] ?? 0,
         ]);
 
+        Cache::forget('stats.public');
+
         return (new ServiceResource($service))
             ->response()
             ->setStatusCode(201);
@@ -69,12 +72,16 @@ class ServiceController extends Controller
             'sort_order' => $validated['sortOrder'] ?? $service->sort_order,
         ]);
 
+        Cache::forget('stats.public');
+
         return new ServiceResource($service->refresh());
     }
 
     public function destroy(Service $service): Response
     {
         $service->delete();
+
+        Cache::forget('stats.public');
 
         return response()->noContent();
     }

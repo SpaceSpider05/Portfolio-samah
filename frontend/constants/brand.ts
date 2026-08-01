@@ -2,7 +2,7 @@ export const BRAND = {
   name: "Samah",
   tagline: "Transforming Ideas Into Digital Success.",
   subtitle:
-    "Premium digital marketing and brand experiences crafted with cinematic precision.",
+    "Digital marketing strategist helping brands grow with SEO, content, social, and performance-driven campaigns.",
   email: "hello@samah.studio",
   phone: "+212 660-311363",
   socials: {
