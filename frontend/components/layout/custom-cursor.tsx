@@ -12,11 +12,13 @@ export function CustomCursor() {
   const label = useUiStore((s) => s.cursorLabel);
   const modalOpen = useUiStore((s) => s.modalOpen);
   const labelRef = useRef(label);
+  const modalOpenRef = useRef(modalOpen);
   const pressedRef = useRef(false);
   const rafRef = useRef<number | null>(null);
   const [finePointer, setFinePointer] = useState(false);
 
   labelRef.current = label;
+  modalOpenRef.current = modalOpen;
 
   useEffect(() => {
     const mq = window.matchMedia("(pointer: fine) and (min-width: 1024px)");
@@ -55,7 +57,7 @@ export function CustomCursor() {
       rafRef.current = null;
       const { x, y } = lastPointer;
       const pressed = pressedRef.current;
-      const hidden = modalOpen;
+      const hidden = modalOpenRef.current;
       const hasLabel = Boolean(labelRef.current);
 
       if (dotRef.current) {
@@ -99,7 +101,6 @@ export function CustomCursor() {
     window.addEventListener("mousedown", onDown);
     window.addEventListener("mouseup", onUp);
 
-    // Force a visible paint immediately after modal close / mount.
     schedulePaint();
     const kick = window.requestAnimationFrame(() => {
       schedulePaint();
@@ -114,7 +115,33 @@ export function CustomCursor() {
         window.cancelAnimationFrame(rafRef.current);
       }
     };
-  }, [finePointer, modalOpen, label]);
+  }, [finePointer]);
+
+  // Re-paint when label / modal state changes without rebinding pointer listeners.
+  useEffect(() => {
+    if (!finePointer) {
+      return;
+    }
+    const id = window.requestAnimationFrame(() => {
+      const { x, y } = lastPointer;
+      const pressed = pressedRef.current;
+      const hidden = modalOpen;
+      const hasLabel = Boolean(label);
+
+      if (dotRef.current) {
+        const scale = pressed ? 0.5 : 1;
+        dotRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(${scale})`;
+        dotRef.current.style.opacity = hidden ? "0" : "1";
+      }
+
+      if (ringRef.current) {
+        const scale = pressed ? (hasLabel ? 0.9 : 0.75) : 1;
+        ringRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(${scale})`;
+        ringRef.current.style.opacity = hidden ? "0" : "1";
+      }
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, [finePointer, label, modalOpen]);
 
   useEffect(() => {
     return () => {

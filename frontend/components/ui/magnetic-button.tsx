@@ -12,6 +12,10 @@ import { useUiStore } from "@/stores/ui-store";
 type MagneticButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary" | "ghost";
   cursorLabel?: "View" | "Play" | "Book";
+  /** Pull toward pointer. Disable inside hover-expand cards to avoid stuck cursor. */
+  magnetic?: boolean;
+  /** When false, parent owns cursor label lifecycle. */
+  manageCursorLabel?: boolean;
   asChild?: boolean;
 };
 
@@ -21,6 +25,8 @@ export const MagneticButton = forwardRef<HTMLButtonElement, MagneticButtonProps>
       className,
       variant = "primary",
       cursorLabel = "Book",
+      magnetic = true,
+      manageCursorLabel = true,
       children,
       onMouseMove,
       onMouseLeave,
@@ -42,7 +48,7 @@ export const MagneticButton = forwardRef<HTMLButtonElement, MagneticButtonProps>
     };
 
     const handleMove = (event: MouseEvent<HTMLButtonElement>) => {
-      if (window.matchMedia("(pointer: coarse)").matches) {
+      if (!magnetic || window.matchMedia("(pointer: coarse)").matches) {
         onMouseMove?.(event);
         return;
       }
@@ -64,12 +70,16 @@ export const MagneticButton = forwardRef<HTMLButtonElement, MagneticButtonProps>
       if (el) {
         el.style.transform = "translate3d(0, 0, 0)";
       }
-      setCursorLabel(null);
+      if (manageCursorLabel) {
+        setCursorLabel(null);
+      }
       onMouseLeave?.(event);
     };
 
     const handleEnter = (event: MouseEvent<HTMLButtonElement>) => {
-      setCursorLabel(cursorLabel);
+      if (manageCursorLabel) {
+        setCursorLabel(cursorLabel);
+      }
       onMouseEnter?.(event);
     };
 

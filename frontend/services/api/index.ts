@@ -60,9 +60,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | undefine
   }
 
   try {
-    return await apiClient<Project>(`/api/v1/projects/${slug}`, {
-      cache: "no-store",
-    });
+    return await apiClient<Project>(`/api/v1/projects/${slug}`);
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
       return undefined;

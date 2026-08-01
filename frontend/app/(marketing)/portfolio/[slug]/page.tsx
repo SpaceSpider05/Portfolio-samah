@@ -7,6 +7,9 @@ import { ProjectBookCta } from "@/components/portfolio/project-book-cta";
 import { ProjectCoverImage } from "@/components/portfolio/project-cover-image";
 import { ProjectGallery } from "@/components/portfolio/project-gallery";
 
+export const dynamicParams = true;
+export const revalidate = 60;
+
 type ProjectPageProps = {
   params: Promise<{ slug: string }>;
 };

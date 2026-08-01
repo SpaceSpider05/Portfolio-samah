@@ -104,7 +104,7 @@ function ServiceCard({
       )}
       onMouseEnter={() => {
         setActive(true);
-        setCursorLabel("View");
+        setCursorLabel("Book");
       }}
       onMouseLeave={() => {
         setActive(false);
@@ -127,7 +127,8 @@ function ServiceCard({
         )}
       >
         <MagneticButton
-          cursorLabel="Book"
+          magnetic={false}
+          manageCursorLabel={false}
           className="w-full"
           onClick={() => router.push(`/book?service=${service.slug}`)}
         >

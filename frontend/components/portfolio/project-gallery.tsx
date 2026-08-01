@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { ProjectCoverImage } from "@/components/portfolio/project-cover-image";
 import { resolveMediaUrl } from "@/lib/media";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,11 @@ type ProjectGalleryProps = {
 
 export function ProjectGallery({ images, title }: ProjectGalleryProps) {
   const [active, setActive] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (active === null) {
@@ -37,11 +43,13 @@ export function ProjectGallery({ images, title }: ProjectGalleryProps) {
       }
     };
 
-    document.body.style.overflow = "hidden";
+    document.documentElement.classList.add("modal-open");
+    document.body.classList.add("modal-open");
     document.addEventListener("keydown", onKeyDown);
 
     return () => {
-      document.body.style.overflow = "";
+      document.documentElement.classList.remove("modal-open");
+      document.body.classList.remove("modal-open");
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [active, images.length]);
@@ -52,6 +60,87 @@ export function ProjectGallery({ images, title }: ProjectGalleryProps) {
 
   const [featured, ...rest] = images;
   const activeImage = active !== null ? images[active] : null;
+
+  const lightbox =
+    mounted && active !== null && activeImage
+      ? createPortal(
+          <div
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-tobago-900/92 p-4 backdrop-blur-md"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${title} gallery`}
+          >
+            <button
+              type="button"
+              aria-label="Close gallery"
+              className="absolute inset-0 cursor-default"
+              onClick={() => setActive(null)}
+            />
+            <div
+              className="relative z-10 flex w-full max-w-5xl flex-col"
+              onClick={(event) => event.stopPropagation()}
+              onKeyDown={(event) => event.stopPropagation()}
+            >
+              <div className="relative flex max-h-[72svh] min-h-[40svh] items-center justify-center overflow-hidden rounded-3xl border border-silver-400/20 bg-tobago-800">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={resolveMediaUrl(activeImage.path)}
+                  alt={
+                    activeImage.description || `${title} gallery ${active + 1}`
+                  }
+                  className="max-h-[72svh] w-full object-contain"
+                />
+              </div>
+              <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div className="max-w-2xl">
+                  <p className="type-caption text-vanilla-200/80">
+                    {active + 1} / {images.length}
+                  </p>
+                  {activeImage.description ? (
+                    <p className="mt-2 text-base text-fantasy-100">
+                      {activeImage.description}
+                    </p>
+                  ) : null}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    className="rounded-full border border-silver-400/25 px-4 py-2 text-sm text-fantasy-100 transition hover:border-rose-400/40"
+                    onClick={() =>
+                      setActive((current) =>
+                        current === null
+                          ? 0
+                          : (current - 1 + images.length) % images.length,
+                      )
+                    }
+                  >
+                    Prev
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-full border border-silver-400/25 px-4 py-2 text-sm text-fantasy-100 transition hover:border-rose-400/40"
+                    onClick={() =>
+                      setActive((current) =>
+                        current === null ? 0 : (current + 1) % images.length,
+                      )
+                    }
+                  >
+                    Next
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-full bg-rose-400 px-4 py-2 text-sm font-medium text-tobago-900"
+                    onClick={() => setActive(null)}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )
+      : null;
 
   return (
     <section className="section-pad">
@@ -146,73 +235,7 @@ export function ProjectGallery({ images, title }: ProjectGalleryProps) {
         ) : null}
       </div>
 
-      {active !== null && activeImage ? (
-        <div className="fixed inset-0 z-90 flex items-center justify-center bg-tobago-900/90 p-4 backdrop-blur-sm">
-          <button
-            type="button"
-            aria-label="Close gallery"
-            className="absolute inset-0"
-            onClick={() => setActive(null)}
-          />
-          <div className="relative z-10 w-full max-w-5xl">
-            <div className="relative flex max-h-[70svh] min-h-[46svh] items-center justify-center overflow-hidden rounded-3xl border border-silver-400/20 bg-tobago-800">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={resolveMediaUrl(activeImage.path)}
-                alt={
-                  activeImage.description || `${title} gallery ${active + 1}`
-                }
-                className="max-h-[70svh] w-full object-contain"
-              />
-            </div>
-            <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div className="max-w-2xl">
-                <p className="type-caption text-vanilla-200/80">
-                  {active + 1} / {images.length}
-                </p>
-                {activeImage.description ? (
-                  <p className="mt-2 text-base text-fantasy-100">
-                    {activeImage.description}
-                  </p>
-                ) : null}
-              </div>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  className="rounded-full border border-silver-400/25 px-4 py-2 text-sm text-fantasy-100"
-                  onClick={() =>
-                    setActive((current) =>
-                      current === null
-                        ? 0
-                        : (current - 1 + images.length) % images.length,
-                    )
-                  }
-                >
-                  Prev
-                </button>
-                <button
-                  type="button"
-                  className="rounded-full border border-silver-400/25 px-4 py-2 text-sm text-fantasy-100"
-                  onClick={() =>
-                    setActive((current) =>
-                      current === null ? 0 : (current + 1) % images.length,
-                    )
-                  }
-                >
-                  Next
-                </button>
-                <button
-                  type="button"
-                  className="rounded-full bg-rose-400 px-4 py-2 text-sm font-medium text-tobago-900"
-                  onClick={() => setActive(null)}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {lightbox}
     </section>
   );
 }
