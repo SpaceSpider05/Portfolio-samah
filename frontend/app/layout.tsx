@@ -42,11 +42,18 @@ export const metadata: Metadata = {
     siteName: SEO.siteName,
     title: SEO.titleDefault,
     description: SEO.description,
+    images: [
+      {
+        url: "/opengraph-image",
+        alt: SEO.ogImageAlt,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: SEO.titleDefault,
     description: SEO.description,
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,

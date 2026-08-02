@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BRAND } from "@/constants/brand";
+import { SEO, absoluteUrl } from "@/constants/seo";
 import { getProjectBySlug, getProjects } from "@/services/api";
 import { ProjectBookCta } from "@/components/portfolio/project-book-cta";
 import { ProjectCoverImage } from "@/components/portfolio/project-cover-image";
@@ -30,8 +31,9 @@ export async function generateMetadata({
   }
 
   const title = `${project.title} — ${project.category}`;
-  const description = project.summary;
+  const description = project.summary.slice(0, 158);
   const path = `/portfolio/${project.slug}`;
+  const image = project.coverImage || absoluteUrl("/opengraph-image");
 
   return {
     title,
@@ -40,16 +42,20 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: path,
+      url: absoluteUrl(path),
       type: "article",
-      images: project.coverImage
-        ? [{ url: project.coverImage, alt: project.title }]
-        : undefined,
+      images: [
+        {
+          url: image,
+          alt: `${project.title} case study by ${BRAND.name}`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [image],
     },
   };
 }
@@ -63,14 +69,67 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   }
 
   const galleryImages = project.galleryImages ?? [];
+  const path = `/portfolio/${project.slug}`;
+  const pageUrl = absoluteUrl(path);
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SEO.siteUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Portfolio",
+        item: absoluteUrl("/portfolio"),
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: project.title,
+        item: pageUrl,
+      },
+    ],
+  };
+
+  const creativeWorkJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    description: project.summary,
+    url: pageUrl,
+    image: project.coverImage || undefined,
+    dateCreated: project.createdAt || undefined,
+    creator: {
+      "@type": "Person",
+      name: BRAND.name,
+      jobTitle: "Digital Marketing Strategist",
+      url: SEO.siteUrl,
+    },
+    about: project.category,
+    keywords: [project.category, ...project.technologies].join(", "),
+  };
 
   return (
     <article>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(creativeWorkJsonLd) }}
+      />
       <section className="relative isolate min-h-[70svh] overflow-hidden bg-tobago-900 pt-24 md:pt-28">
         <div className="absolute inset-0">
           <ProjectCoverImage
             src={project.coverImage}
-            alt={`${project.title} cover`}
+            alt={`${project.title} — ${project.category} case study for ${project.client}`}
             priority
             sizes="100vw"
           />
@@ -107,7 +166,9 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
           <aside className="space-y-8 border-t border-border pt-8 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
             <div>
               <p className="type-overline">Client</p>
-              <p className="mt-2 font-display text-2xl text-heading">{project.client}</p>
+              <p className="mt-2 font-display text-2xl text-heading">
+                {project.client}
+              </p>
             </div>
             <div>
               <p className="type-overline">Focus</p>

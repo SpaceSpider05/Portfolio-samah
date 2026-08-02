@@ -7,7 +7,7 @@ import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { HashScrollHandler } from "@/components/layout/hash-scroll-handler";
 import { ActiveSectionTracker } from "@/components/layout/active-section-tracker";
 import { BRAND } from "@/constants/brand";
-import { SEO, absoluteUrl } from "@/constants/seo";
+import { SEO, absoluteUrl, resolveSeoPhone } from "@/constants/seo";
 import { getSiteSettings } from "@/services/api";
 
 export default async function MarketingLayout({
@@ -17,37 +17,64 @@ export default async function MarketingLayout({
 }) {
   const siteSettings = await getSiteSettings();
   const contactEmail = siteSettings.contactEmail || BRAND.email;
-  const contactPhone = siteSettings.contactPhone ?? BRAND.phone;
+  const contactPhone = resolveSeoPhone(siteSettings.contactPhone);
+  const personId = `${SEO.siteUrl}/#person`;
+  const serviceId = `${SEO.siteUrl}/#professional-service`;
+
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": personId,
+    name: BRAND.name,
+    url: SEO.siteUrl,
+    image: absoluteUrl("/opengraph-image"),
+    jobTitle: "Digital Marketing Strategist",
+    description: SEO.description,
+    email: contactEmail,
+    telephone: contactPhone,
+    knowsAbout: [...SEO.knowsAbout],
+    sameAs: [
+      BRAND.socials.linkedin,
+      BRAND.socials.instagram,
+      BRAND.socials.whatsapp,
+      BRAND.socials.telegram,
+    ].filter(Boolean),
+    worksFor: {
+      "@id": serviceId,
+    },
+  };
 
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
+    "@id": serviceId,
     name: BRAND.name,
     alternateName: "Grow with Samah",
     url: SEO.siteUrl,
     email: contactEmail,
-    telephone: contactPhone || undefined,
+    telephone: contactPhone,
     description: SEO.description,
     image: absoluteUrl("/opengraph-image"),
     areaServed: "Worldwide",
     priceRange: "$$",
+    knowsAbout: [...SEO.knowsAbout],
     sameAs: [
       BRAND.socials.linkedin,
       BRAND.socials.instagram,
+      BRAND.socials.whatsapp,
       BRAND.socials.telegram,
     ].filter(Boolean),
     founder: {
-      "@type": "Person",
-      name: BRAND.name,
-      jobTitle: "Digital Marketing Strategist",
-      url: SEO.siteUrl,
-      sameAs: [BRAND.socials.linkedin, BRAND.socials.instagram],
+      "@id": personId,
+    },
+    employee: {
+      "@id": personId,
     },
     contactPoint: {
       "@type": "ContactPoint",
-      contactType: "customer service",
+      contactType: "sales",
       email: contactEmail,
-      telephone: contactPhone || undefined,
+      telephone: contactPhone,
       availableLanguage: ["English", "French", "Arabic"],
     },
   };
@@ -55,19 +82,24 @@ export default async function MarketingLayout({
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${SEO.siteUrl}/#website`,
     name: BRAND.name,
     alternateName: "Grow with Samah",
     url: SEO.siteUrl,
     description: SEO.description,
+    inLanguage: "en",
     publisher: {
-      "@type": "Person",
-      name: BRAND.name,
+      "@id": personId,
     },
   };
 
   return (
     <div className="cursor-none-desktop dark min-h-screen bg-background text-foreground">
       <MarketingThemeLock />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}

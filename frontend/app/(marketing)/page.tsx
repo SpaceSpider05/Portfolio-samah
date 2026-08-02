@@ -12,7 +12,8 @@ import { FaqSection } from "@/components/landing/faq-section";
 import { FinalCtaSection } from "@/components/landing/final-cta-section";
 import { ContactSection } from "@/components/landing/contact-section";
 import { SectionDivider } from "@/components/ui/section-divider";
-import { SEO, pageMetadata } from "@/constants/seo";
+import { BRAND } from "@/constants/brand";
+import { SEO, absoluteUrl, pageMetadata } from "@/constants/seo";
 import { getAbout, getProjects, getServices, getSiteSettings, getStats } from "@/services/api";
 
 export const metadata: Metadata = {
@@ -63,11 +64,37 @@ export default async function HomePage() {
     })),
   };
 
+  const servicesJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Digital marketing services",
+    itemListElement: services.map((service, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Service",
+        name: service.title,
+        description: service.description,
+        provider: {
+          "@type": "Person",
+          name: BRAND.name,
+          url: SEO.siteUrl,
+        },
+        areaServed: "Worldwide",
+        url: absoluteUrl("/#services"),
+      },
+    })),
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }}
       />
       <HeroSection about={about} stats={stats} />
       <TrustBarSection />
