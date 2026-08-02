@@ -43,7 +43,7 @@ export function AboutSection({ about }: AboutSectionProps) {
       <div className="mx-auto max-w-6xl">
         <div className="max-w-2xl">
           <p className="type-overline mb-3">About me</p>
-          <h2 className="type-h2">Who I am, why I do this, why hire me</h2>
+          <h2 className="type-h2">hadi Meet the strategist behind</h2>
         </div>
 
         <div className="mt-12 grid items-start gap-10 lg:grid-cols-[minmax(260px,0.9fr)_1.1fr] lg:gap-14">

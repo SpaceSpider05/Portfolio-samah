@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Edu_VIC_WA_NT_Hand, Outfit } from "next/font/google";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SEO } from "@/constants/seo";
 import "lenis/dist/lenis.css";
@@ -75,6 +76,7 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} ${eduHand.variable} min-h-screen bg-background text-foreground antialiased`}
       >
+        <GoogleAnalytics />
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
