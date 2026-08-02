@@ -17,7 +17,11 @@ export default async function MarketingLayout({
 }) {
   const siteSettings = await getSiteSettings();
   const contactEmail = siteSettings.contactEmail || BRAND.email;
-  const contactPhone = resolveSeoPhone(siteSettings.contactPhone);
+  // Footer/admin: always respect the CMS phone (fallback only when empty).
+  const contactPhone =
+    siteSettings.contactPhone?.trim() || BRAND.phone || null;
+  // Schema only: strip obvious placeholders so fake CMS numbers don't pollute SEO.
+  const seoPhone = resolveSeoPhone(siteSettings.contactPhone);
   const personId = `${SEO.siteUrl}/#person`;
   const serviceId = `${SEO.siteUrl}/#professional-service`;
 
@@ -31,7 +35,7 @@ export default async function MarketingLayout({
     jobTitle: "Digital Marketing Strategist",
     description: SEO.description,
     email: contactEmail,
-    telephone: contactPhone,
+    telephone: seoPhone,
     knowsAbout: [...SEO.knowsAbout],
     sameAs: [
       BRAND.socials.linkedin,
@@ -52,7 +56,7 @@ export default async function MarketingLayout({
     alternateName: "Grow with Samah",
     url: SEO.siteUrl,
     email: contactEmail,
-    telephone: contactPhone,
+    telephone: seoPhone,
     description: SEO.description,
     image: absoluteUrl("/opengraph-image"),
     areaServed: "Worldwide",
@@ -74,7 +78,7 @@ export default async function MarketingLayout({
       "@type": "ContactPoint",
       contactType: "sales",
       email: contactEmail,
-      telephone: contactPhone,
+      telephone: seoPhone,
       availableLanguage: ["English", "French", "Arabic"],
     },
   };
