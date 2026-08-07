@@ -4,10 +4,10 @@
     'eyebrow' => 'Admin notification',
     'ctaUrl' => 'mailto:'.$booking->email,
     'ctaLabel' => 'Reply to client',
-    'footerNote' => 'Tip: use Reply in your inbox — this email is set to reply directly to the client.',
+    'footerNote' => "Tip: use Reply in your inbox — this email is set to reply directly to the client.",
 ])
     <p style="margin:0 0 18px;">
-        A new consultation booking just landed. Review the details below and reply when you’re ready.
+        A new consultation booking just landed. Review the details below and reply when you're ready.
     </p>
 
     <p style="margin:0 0 10px;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#B06669;">
@@ -47,26 +47,14 @@
                 </span>
             </td>
         </tr>
-        @if ($booking->scheduled_at)
-            <tr>
-                <td style="padding:10px 0;border-bottom:1px solid #EFE8DE;color:#96836D;">Requested time</td>
-                <td style="padding:10px 0;border-bottom:1px solid #EFE8DE;color:#422B23;font-weight:600;">
-                    {{ $booking->scheduled_at->timezone(config('app.timezone'))->format('M j, Y g:i A') }}
-                </td>
-            </tr>
-        @endif
     </table>
 
     @if ($booking->notes)
         <p style="margin:0 0 8px;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#B06669;">
-            Notes from the client
+            Notes
         </p>
         <p style="margin:0 0 8px;padding:14px 16px;background-color:#F7F3ED;border-radius:12px;color:#52392F;">
             {{ $booking->notes }}
         </p>
     @endif
-
-    <p style="margin:22px 0 0;">
-        — {{ config('app.name') }} bookings
-    </p>
 @endcomponent

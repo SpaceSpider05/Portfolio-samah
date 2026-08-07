@@ -8,17 +8,17 @@
     'eyebrow' => 'Consultation request confirmed',
     'ctaUrl' => $frontendUrl.'/book',
     'ctaLabel' => 'Book another call',
-    'footerNote' => 'Need to add details? Just reply to this email and we’ll include them before our follow-up.',
+    'footerNote' => "Need to add details? Just reply to this email and we'll include them before our follow-up.",
 ])
     <p style="margin:0 0 16px;">Hi {{ $booking->name }},</p>
 
     <p style="margin:0 0 16px;">
         Thank you for booking a call with <strong>{{ config('app.name') }}</strong>.
-        We’ve got your request and will review it carefully.
+        We've got your request and will review it carefully.
     </p>
 
     <p style="margin:0 0 22px;padding:14px 16px;background-color:#FBF6F6;border-left:4px solid #DBA1A2;border-radius:0 12px 12px 0;">
-        We’ll get back to you <strong>within 24 hours</strong>.
+        We'll get back to you <strong>within 24 hours</strong>.
     </p>
 
     <p style="margin:0 0 10px;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#B06669;">
