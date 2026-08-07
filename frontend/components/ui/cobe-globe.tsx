@@ -348,8 +348,7 @@ export function Globe({
               pointerEvents: "none",
               borderRadius: 999,
               opacity: `var(--cobe-visible-${m.id}, 0)`,
-              filter: `blur(calc((1 - var(--cobe-visible-${m.id}, 0)) * 8px))`,
-              transition: "opacity 0.8s, filter 0.8s",
+              transition: "opacity 0.8s",
             } as CSSProperties
           }
         >
@@ -391,8 +390,7 @@ export function Globe({
                 borderRadius: 999,
                 boxShadow: "0 1px 4px rgba(0,0,0,0.18)",
                 opacity: `var(--cobe-visible-arc-${a.id}, 0)`,
-                filter: `blur(calc((1 - var(--cobe-visible-arc-${a.id}, 0)) * 8px))`,
-                transition: "opacity 0.8s, filter 0.8s",
+                transition: "opacity 0.8s",
               } as CSSProperties
             }
           >

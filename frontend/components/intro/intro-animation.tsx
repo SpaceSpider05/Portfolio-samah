@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { BRAND } from "@/constants/brand";
 import { gsap, registerGsap, useGSAP } from "@/lib/gsap";
-import { prefersReducedMotion } from "@/lib/motion";
+import { prefersReducedMotion, isMobileViewport } from "@/lib/motion";
 import { useUiStore } from "@/stores/ui-store";
 
 const INTRO_SEEN_KEY = "samah-intro-seen";
@@ -32,8 +32,13 @@ export function IntroAnimation() {
     const seen =
       typeof window !== "undefined" &&
       sessionStorage.getItem(INTRO_SEEN_KEY) === "1";
+    const coarse =
+      typeof window !== "undefined" &&
+      window.matchMedia("(pointer: coarse)").matches;
+    // Keep the intro on desktop; skip on mobile/touch so first paint isn't blocked.
+    const skipMobile = isMobileViewport() || coarse;
 
-    if (pathname !== "/" || seen || prefersReducedMotion()) {
+    if (pathname !== "/" || seen || prefersReducedMotion() || skipMobile) {
       finish();
     }
   }, [pathname]);

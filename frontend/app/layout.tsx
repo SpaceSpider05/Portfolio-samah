@@ -5,17 +5,19 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SEO } from "@/constants/seo";
 import "./globals.css";
 
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-  display: "swap",
-});
-
 const eduHand = Edu_VIC_WA_NT_Hand({
   subsets: ["latin"],
   weight: ["500", "600"],
   variable: "--font-edu-hand",
   display: "swap",
+  preload: true,
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {

@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
+import { isMobileViewport } from "@/lib/motion";
 
 const HeroGlobe = dynamic(
   () => import("@/components/hero/hero-globe").then((mod) => mod.HeroGlobe),
@@ -10,12 +11,13 @@ const HeroGlobe = dynamic(
 
 /**
  * Keeps the globe slot reserved (CLS=0) while deferring WebGL until after
- * first paint / idle and while the hero is on screen.
+ * first paint. On mobile, wait for interaction (or a long idle fallback) so
+ * WebGL never competes with LCP/TBT on the critical path.
  */
 export function DeferredHeroGlobe() {
   const slotRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
-  const [idleReady, setIdleReady] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const node = slotRef.current;
@@ -41,9 +43,34 @@ export function DeferredHeroGlobe() {
 
     const enable = () => {
       if (!cancelled) {
-        setIdleReady(true);
+        setReady(true);
       }
     };
+
+    const mobile = isMobileViewport();
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+
+    if (mobile || coarse) {
+      const onInteract = () => enable();
+      window.addEventListener("pointerdown", onInteract, {
+        once: true,
+        passive: true,
+      });
+      window.addEventListener("scroll", onInteract, {
+        once: true,
+        passive: true,
+      });
+      // Long fallback so real users still see the globe if they never interact.
+      timeoutId = window.setTimeout(enable, 8000);
+      return () => {
+        cancelled = true;
+        window.removeEventListener("pointerdown", onInteract);
+        window.removeEventListener("scroll", onInteract);
+        if (timeoutId !== undefined) {
+          window.clearTimeout(timeoutId);
+        }
+      };
+    }
 
     const ric = window.requestIdleCallback;
     if (typeof ric === "function") {
@@ -51,8 +78,6 @@ export function DeferredHeroGlobe() {
     } else {
       timeoutId = window.setTimeout(enable, 1200);
     }
-
-    // Hard fallback so the globe still appears on slow devices.
     const hard = window.setTimeout(enable, 2200);
 
     return () => {
@@ -72,7 +97,7 @@ export function DeferredHeroGlobe() {
       ref={slotRef}
       className="relative mx-auto aspect-square w-full max-w-[22rem] md:max-w-[26rem] lg:max-w-none"
     >
-      {idleReady && inView ? <HeroGlobe /> : null}
+      {ready && inView ? <HeroGlobe /> : null}
     </div>
   );
 }

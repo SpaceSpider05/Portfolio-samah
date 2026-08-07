@@ -7,6 +7,7 @@ import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provi
 import { SiteBackground } from "@/components/layout/site-background";
 import { CursorModeSync } from "@/components/providers/cursor-mode-sync";
 import { useUiStore } from "@/stores/ui-store";
+import { isMobileViewport } from "@/lib/motion";
 
 const IntroAnimation = dynamic(
   () =>
@@ -33,12 +34,11 @@ const SamahAiWidget = dynamic(
   { ssr: false },
 );
 
-function useDeferredReady(timeoutMs = 2500) {
+function useDeferredReady(timeoutMs = 8000) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    let idleId: number | undefined;
     let timeoutId: number | undefined;
 
     const enable = () => {
@@ -58,27 +58,17 @@ function useDeferredReady(timeoutMs = 2500) {
       passive: true,
     });
 
-    const ric = window.requestIdleCallback;
-    if (typeof ric === "function") {
-      idleId = ric(enable, { timeout: timeoutMs });
-    } else {
-      timeoutId = window.setTimeout(enable, timeoutMs);
-    }
-
-    const hard = window.setTimeout(enable, timeoutMs + 500);
+    // Long idle fallback — avoids competing with LCP on lab runs.
+    timeoutId = window.setTimeout(enable, timeoutMs);
 
     return () => {
       cancelled = true;
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
       window.removeEventListener("scroll", onInteract);
-      if (idleId !== undefined && typeof window.cancelIdleCallback === "function") {
-        window.cancelIdleCallback(idleId);
-      }
       if (timeoutId !== undefined) {
         window.clearTimeout(timeoutId);
       }
-      window.clearTimeout(hard);
     };
   }, [timeoutMs]);
 
@@ -86,7 +76,7 @@ function useDeferredReady(timeoutMs = 2500) {
 }
 
 function DeferredChrome() {
-  const ready = useDeferredReady(2800);
+  const ready = useDeferredReady(10000);
   if (!ready) {
     return null;
   }
@@ -104,17 +94,30 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const setIntroComplete = useUiStore((s) => s.setIntroComplete);
+  const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
     if (!isHome) {
       setIntroComplete(true);
+      setShowIntro(false);
+      return;
     }
+
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    const mobile = isMobileViewport() || coarse;
+    if (mobile) {
+      setIntroComplete(true);
+      setShowIntro(false);
+      return;
+    }
+
+    setShowIntro(true);
   }, [isHome, setIntroComplete]);
 
   return (
     <SmoothScrollProvider>
       <SiteBackground lite={!isHome} />
-      {isHome ? <IntroAnimation /> : null}
+      {showIntro ? <IntroAnimation /> : null}
       <CursorModeSync />
       <DeferredChrome />
       {children}
