@@ -39,7 +39,6 @@ function useDeferredReady(timeoutMs = 8000) {
 
   useEffect(() => {
     let cancelled = false;
-    let timeoutId: number | undefined;
 
     const enable = () => {
       if (!cancelled) {
@@ -59,16 +58,14 @@ function useDeferredReady(timeoutMs = 8000) {
     });
 
     // Long idle fallback — avoids competing with LCP on lab runs.
-    timeoutId = window.setTimeout(enable, timeoutMs);
+    const timeoutId = window.setTimeout(enable, timeoutMs);
 
     return () => {
       cancelled = true;
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
       window.removeEventListener("scroll", onInteract);
-      if (timeoutId !== undefined) {
-        window.clearTimeout(timeoutId);
-      }
+      window.clearTimeout(timeoutId);
     };
   }, [timeoutMs]);
 
