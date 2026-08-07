@@ -3,6 +3,12 @@ import dynamic from "next/dynamic";
 import { HeroSection } from "@/components/hero/hero-section";
 import { TrustBarSection } from "@/components/landing/trust-bar-section";
 import { SkillsSection } from "@/components/landing/skills-section";
+import {
+  LazyClientSection,
+  loadFaq,
+  loadProcess,
+  loadWhyMe,
+} from "@/components/landing/lazy-client-section";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { BRAND } from "@/constants/brand";
 import { SEO, absoluteUrl, pageMetadata } from "@/constants/seo";
@@ -30,11 +36,6 @@ const ServicesSection = dynamic(
     ),
   { loading: () => <SectionSkeleton /> },
 );
-const WhyMeSection = dynamic(
-  () =>
-    import("@/components/landing/why-me-section").then((mod) => mod.WhyMeSection),
-  { loading: () => <SectionSkeleton /> },
-);
 const PortfolioSection = dynamic(
   () =>
     import("@/components/portfolio/portfolio-section").then(
@@ -42,21 +43,9 @@ const PortfolioSection = dynamic(
     ),
   { loading: () => <SectionSkeleton /> },
 );
-const ProcessSection = dynamic(
-  () =>
-    import("@/components/landing/process-section").then(
-      (mod) => mod.ProcessSection,
-    ),
-  { loading: () => <SectionSkeleton minHeight="40rem" /> },
-);
 const StatsSection = dynamic(
   () =>
     import("@/components/stats/stats-section").then((mod) => mod.StatsSection),
-  { loading: () => <SectionSkeleton /> },
-);
-const FaqSection = dynamic(
-  () =>
-    import("@/components/landing/faq-section").then((mod) => mod.FaqSection),
   { loading: () => <SectionSkeleton /> },
 );
 const FinalCtaSection = dynamic(
@@ -159,12 +148,18 @@ export default async function HomePage() {
       <AboutSection about={about} />
       <SectionDivider />
       <ServicesSection services={services} />
-      <WhyMeSection />
+      <LazyClientSection
+        loader={loadWhyMe}
+        fallback={<SectionSkeleton />}
+      />
       <PortfolioSection projects={featuredProjects} />
-      <ProcessSection />
+      <LazyClientSection
+        loader={loadProcess}
+        fallback={<SectionSkeleton minHeight="40rem" />}
+      />
       <SkillsSection />
       <StatsSection stats={stats} />
-      <FaqSection />
+      <LazyClientSection loader={loadFaq} fallback={<SectionSkeleton />} />
       <FinalCtaSection />
       <ContactSection contactEmail={siteSettings.contactEmail} />
     </>

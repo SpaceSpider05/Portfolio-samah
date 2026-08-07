@@ -7,10 +7,11 @@ import "./globals.css";
 
 const eduHand = Edu_VIC_WA_NT_Hand({
   subsets: ["latin"],
-  weight: ["500", "600"],
+  weight: ["600"],
   variable: "--font-edu-hand",
   display: "swap",
   preload: true,
+  adjustFontFallback: true,
 });
 
 const outfit = Outfit({
@@ -18,6 +19,7 @@ const outfit = Outfit({
   variable: "--font-outfit",
   display: "swap",
   preload: false,
+  adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
