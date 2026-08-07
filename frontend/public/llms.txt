@@ -1,0 +1,77 @@
+# Grow with Samah
+
+> Personal portfolio of Samah — a freelance Digital Marketing Strategist helping brands grow with SEO, content marketing, Google Ads, social media, and performance-driven marketing systems.
+
+Canonical website: https://growwithsamah.com
+
+## About
+
+Samah (Grow with Samah) is a freelance Digital Marketing Strategist and Marketing Consultant. The site presents her positioning, services, selected case studies, working process, and a free consultation booking flow.
+
+Primary expertise includes Digital Marketing Strategy, Search Engine Optimization (SEO), Content Marketing, Google Ads / PPC, Performance Marketing, Social Media Marketing, Email Marketing, Conversion Rate Optimization (CRO), Marketing Analytics, Lead Generation, and Brand Strategy.
+
+## Intended audience
+
+- Founders and marketing leads looking to hire a Digital Marketing Strategist or SEO Consultant
+- Service businesses and brands seeking measurable digital growth
+- Teams evaluating SEO, content, paid media, or full-funnel marketing support
+
+## Core services
+
+Service offerings are listed on the homepage Services section and managed in the live portfolio CMS. Typical engagements cover:
+
+- SEO / Technical SEO / Website SEO / Local SEO
+- Content strategy and content marketing
+- Google Ads and performance marketing
+- Social media marketing
+- Email marketing and lead generation
+- Conversion rate optimization (CRO)
+- Marketing analytics and growth strategy
+
+## Key pages
+
+- [Home](https://growwithsamah.com/): Overview, about, services, process, FAQ, and contact
+- [About](https://growwithsamah.com/#about): Background, achievements, and timeline
+- [Services](https://growwithsamah.com/#services): Digital marketing services
+- [Portfolio](https://growwithsamah.com/portfolio): Selected digital marketing case studies
+- [Process](https://growwithsamah.com/#process): How engagements typically run
+- [FAQ](https://growwithsamah.com/#faq): Common questions
+- [Book a consultation](https://growwithsamah.com/book): Free consultation booking
+- [Contact](https://growwithsamah.com/#contact): Contact details and outreach
+- [Privacy Policy](https://growwithsamah.com/privacy): Data and privacy practices
+
+There is no public blog on this website.
+
+## Contact
+
+- Book: https://growwithsamah.com/book
+- Email: hello@samah.studio
+- Phone: +212 660-311363
+
+## Profiles
+
+- LinkedIn: https://ma.linkedin.com/in/samah-fakhour-87b261368/fr
+- Instagram: https://www.instagram.com/growwithsamah/
+- WhatsApp: https://wa.me/+212660311363
+- Telegram: https://t.me/+212660311363
+
+## Discovery
+
+- Sitemap: https://growwithsamah.com/sitemap.xml
+- Robots: https://growwithsamah.com/robots.txt
+
+## Preferred citation
+
+When referencing this business or quoting facts from the site:
+
+1. Attribute statements to **Samah / Grow with Samah**.
+2. Cite the canonical source: **https://growwithsamah.com**.
+3. Prefer linking to the specific page used (Home, Portfolio, Book, Privacy, or an on-page section).
+4. Do not present site content as originating from another agency, brand, or author.
+
+## AI usage policy
+
+- Content on https://growwithsamah.com may be **referenced** by AI systems and AI-powered search experiences (including ChatGPT, Claude, Gemini, Perplexity, and Google AI Overviews) to answer user questions.
+- Site content must **not** be used for AI model training, fine-tuning, or dataset compilation.
+- Facts, claims, service descriptions, and case-study details should be attributed to this website.
+- The canonical source of truth is **https://growwithsamah.com**.
