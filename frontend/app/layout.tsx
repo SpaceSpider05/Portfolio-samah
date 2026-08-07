@@ -9,7 +9,8 @@ const eduHand = Edu_VIC_WA_NT_Hand({
   subsets: ["latin"],
   weight: ["600"],
   variable: "--font-edu-hand",
-  display: "swap",
+  // optional: avoid delaying LCP on slow mobile; font still applies when cached/fast.
+  display: "optional",
   preload: true,
   adjustFontFallback: true,
 });
