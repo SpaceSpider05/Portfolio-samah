@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useCallback, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useCallback, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import createGlobe from "cobe";
 import { cn } from "@/lib/utils";
+import { isMobileViewport } from "@/lib/motion";
 
 interface Marker {
   id: string;
@@ -54,8 +55,9 @@ export function Globe({
   speed = 0.0025,
   theta = 0.28,
   diffuse = 1.4,
-  mapSamples = 16000,
+  mapSamples,
 }: GlobeProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointerInteracting = useRef<{ x: number; y: number } | null>(null);
   const lastPointer = useRef<{ x: number; y: number; t: number } | null>(null);
@@ -64,6 +66,17 @@ export function Globe({
   const phiOffsetRef = useRef(0);
   const thetaOffsetRef = useRef(0);
   const isPausedRef = useRef(false);
+  const isOffscreenRef = useRef(false);
+  const isHiddenRef = useRef(false);
+  const [resolvedSamples] = useState(() => {
+    if (typeof mapSamples === "number") {
+      return mapSamples;
+    }
+    if (typeof window === "undefined") {
+      return 8000;
+    }
+    return isMobileViewport() ? 5000 : 16000;
+  });
 
   const handlePointerDown = useCallback((e: ReactPointerEvent) => {
     pointerInteracting.current = { x: e.clientX, y: e.clientY };
@@ -127,6 +140,32 @@ export function Globe({
   }, [handlePointerMove, handlePointerUp]);
 
   useEffect(() => {
+    const node = rootRef.current;
+    if (!node) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isOffscreenRef.current = !entry?.isIntersecting;
+      },
+      { threshold: 0.05, rootMargin: "80px 0px" },
+    );
+    observer.observe(node);
+
+    const onVisibility = () => {
+      isHiddenRef.current = document.hidden;
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    onVisibility();
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!canvasRef.current) {
       return;
     }
@@ -141,7 +180,8 @@ export function Globe({
         return;
       }
 
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const mobile = isMobileViewport();
+      const dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1 : 2);
       globe = createGlobe(canvas, {
         devicePixelRatio: dpr,
         width,
@@ -150,7 +190,7 @@ export function Globe({
         theta,
         dark,
         diffuse,
-        mapSamples,
+        mapSamples: resolvedSamples,
         mapBrightness,
         baseColor,
         markerColor,
@@ -173,7 +213,12 @@ export function Globe({
       });
 
       function animate() {
-        if (!isPausedRef.current) {
+        const shouldRun =
+          !isPausedRef.current &&
+          !isOffscreenRef.current &&
+          !isHiddenRef.current;
+
+        if (shouldRun) {
           phi += speed;
           if (
             Math.abs(velocity.current.phi) > 0.0001 ||
@@ -193,27 +238,27 @@ export function Globe({
             thetaOffsetRef.current +=
               (thetaMax - thetaOffsetRef.current) * 0.1;
           }
+          globe!.update({
+            phi: phi + phiOffsetRef.current + dragOffset.current.phi,
+            theta: theta + thetaOffsetRef.current + dragOffset.current.theta,
+            dark,
+            mapBrightness,
+            markerColor,
+            baseColor,
+            arcColor,
+            markerElevation,
+            markers: markers.map((m) => ({
+              location: m.location,
+              size: markerSize,
+              id: m.id,
+            })),
+            arcs: arcs.map((a) => ({
+              from: a.from,
+              to: a.to,
+              id: a.id,
+            })),
+          });
         }
-        globe!.update({
-          phi: phi + phiOffsetRef.current + dragOffset.current.phi,
-          theta: theta + thetaOffsetRef.current + dragOffset.current.theta,
-          dark,
-          mapBrightness,
-          markerColor,
-          baseColor,
-          arcColor,
-          markerElevation,
-          markers: markers.map((m) => ({
-            location: m.location,
-            size: markerSize,
-            id: m.id,
-          })),
-          arcs: arcs.map((a) => ({
-            from: a.from,
-            to: a.to,
-            id: a.id,
-          })),
-        });
         animationId = requestAnimationFrame(animate);
       }
       animate();
@@ -263,11 +308,11 @@ export function Globe({
     speed,
     theta,
     diffuse,
-    mapSamples,
+    resolvedSamples,
   ]);
 
   return (
-    <div className={cn("relative aspect-square select-none", className)}>
+    <div ref={rootRef} className={cn("relative aspect-square select-none", className)}>
       <canvas
         ref={canvasRef}
         onPointerDown={handlePointerDown}

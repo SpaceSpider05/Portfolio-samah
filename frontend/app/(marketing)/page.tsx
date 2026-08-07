@@ -1,20 +1,78 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { HeroSection } from "@/components/hero/hero-section";
 import { TrustBarSection } from "@/components/landing/trust-bar-section";
-import { AboutSection } from "@/components/about/about-section";
-import { ServicesSection } from "@/components/services/services-section";
-import { WhyMeSection } from "@/components/landing/why-me-section";
-import { PortfolioSection } from "@/components/portfolio/portfolio-section";
-import { ProcessSection } from "@/components/landing/process-section";
 import { SkillsSection } from "@/components/landing/skills-section";
-import { StatsSection } from "@/components/stats/stats-section";
-import { FaqSection } from "@/components/landing/faq-section";
-import { FinalCtaSection } from "@/components/landing/final-cta-section";
-import { ContactSection } from "@/components/landing/contact-section";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { BRAND } from "@/constants/brand";
 import { SEO, absoluteUrl, pageMetadata } from "@/constants/seo";
 import { getAbout, getProjects, getServices, getSiteSettings, getStats } from "@/services/api";
+
+function SectionSkeleton({ minHeight = "24rem" }: { minHeight?: string }) {
+  return (
+    <div
+      aria-hidden
+      className="section-pad mx-auto max-w-6xl"
+      style={{ minHeight }}
+    />
+  );
+}
+
+const AboutSection = dynamic(
+  () =>
+    import("@/components/about/about-section").then((mod) => mod.AboutSection),
+  { loading: () => <SectionSkeleton minHeight="36rem" /> },
+);
+const ServicesSection = dynamic(
+  () =>
+    import("@/components/services/services-section").then(
+      (mod) => mod.ServicesSection,
+    ),
+  { loading: () => <SectionSkeleton /> },
+);
+const WhyMeSection = dynamic(
+  () =>
+    import("@/components/landing/why-me-section").then((mod) => mod.WhyMeSection),
+  { loading: () => <SectionSkeleton /> },
+);
+const PortfolioSection = dynamic(
+  () =>
+    import("@/components/portfolio/portfolio-section").then(
+      (mod) => mod.PortfolioSection,
+    ),
+  { loading: () => <SectionSkeleton /> },
+);
+const ProcessSection = dynamic(
+  () =>
+    import("@/components/landing/process-section").then(
+      (mod) => mod.ProcessSection,
+    ),
+  { loading: () => <SectionSkeleton minHeight="40rem" /> },
+);
+const StatsSection = dynamic(
+  () =>
+    import("@/components/stats/stats-section").then((mod) => mod.StatsSection),
+  { loading: () => <SectionSkeleton /> },
+);
+const FaqSection = dynamic(
+  () =>
+    import("@/components/landing/faq-section").then((mod) => mod.FaqSection),
+  { loading: () => <SectionSkeleton /> },
+);
+const FinalCtaSection = dynamic(
+  () =>
+    import("@/components/landing/final-cta-section").then(
+      (mod) => mod.FinalCtaSection,
+    ),
+  { loading: () => <SectionSkeleton minHeight="20rem" /> },
+);
+const ContactSection = dynamic(
+  () =>
+    import("@/components/landing/contact-section").then(
+      (mod) => mod.ContactSection,
+    ),
+  { loading: () => <SectionSkeleton /> },
+);
 
 export const metadata: Metadata = {
   ...pageMetadata(SEO.pages.home),

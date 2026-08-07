@@ -3,7 +3,6 @@ import { Edu_VIC_WA_NT_Hand, Outfit } from "next/font/google";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SEO } from "@/constants/seo";
-import "lenis/dist/lenis.css";
 import "./globals.css";
 
 const outfit = Outfit({

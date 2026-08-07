@@ -104,10 +104,10 @@ export function ProcessSection() {
           >
             <div className="absolute inset-y-1 inset-x-0.75 rounded-full bg-silver-400/10" />
 
-            {/* Growing road fill */}
+            {/* Growing road fill — scaleY stays compositor-friendly */}
             <div
-              className="absolute inset-x-0 top-0 overflow-hidden rounded-full"
-              style={{ height: `${progress * 100}%` }}
+              className="absolute inset-0 origin-top overflow-hidden rounded-full will-change-transform"
+              style={{ transform: `scaleY(${progress})` }}
             >
               <div className="absolute inset-0 bg-linear-to-b from-rose-300/90 via-rose-400/75 to-rose-400/45" />
               <div
@@ -122,14 +122,18 @@ export function ProcessSection() {
             {/* Soft traveler glow at the tip */}
             {progress > 0.01 && progress < 0.995 ? (
               <div
-                className="absolute left-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-300/35 blur-md"
-                style={{ top: `${progress * 100}%` }}
+                className="absolute top-0 left-1/2 h-8 w-8 rounded-full bg-rose-300/35 blur-md will-change-transform"
+                style={{
+                  transform: `translate3d(-50%, calc(${progress * 100}% - 50%), 0)`,
+                }}
               />
             ) : null}
             {progress > 0.01 && progress < 0.995 ? (
               <div
-                className="absolute left-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-fantasy-100 shadow-[0_0_12px_color-mix(in_oklab,var(--rose-400)_70%,transparent)]"
-                style={{ top: `${progress * 100}%` }}
+                className="absolute top-0 left-1/2 h-2.5 w-2.5 rounded-full bg-fantasy-100 shadow-[0_0_12px_color-mix(in_oklab,var(--rose-400)_70%,transparent)] will-change-transform"
+                style={{
+                  transform: `translate3d(-50%, calc(${progress * 100}% - 50%), 0)`,
+                }}
               />
             ) : null}
           </div>

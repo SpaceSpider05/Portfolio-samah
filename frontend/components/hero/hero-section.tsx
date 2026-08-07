@@ -1,15 +1,7 @@
-"use client";
-
-import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 import type { AboutContent, StatsContent } from "@/types";
 import { LANDING } from "@/constants/landing";
-import { MagneticButton } from "@/components/ui/magnetic-button";
-
-const HeroGlobe = dynamic(
-  () => import("@/components/hero/hero-globe").then((mod) => mod.HeroGlobe),
-  { ssr: false },
-);
+import { HeroCtas } from "@/components/hero/hero-ctas";
+import { DeferredHeroGlobe } from "@/components/hero/deferred-hero-globe";
 
 type HeroSectionProps = {
   about: AboutContent;
@@ -17,8 +9,6 @@ type HeroSectionProps = {
 };
 
 export function HeroSection({ about, stats }: HeroSectionProps) {
-  const router = useRouter();
-
   const heroStats =
     about.achievements.length > 0
       ? about.achievements.slice(0, 4).map((item) => ({
@@ -54,22 +44,7 @@ export function HeroSection({ about, stats }: HeroSectionProps) {
             {LANDING.hero.description}
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            <MagneticButton onClick={() => router.push("/book")}>
-              {LANDING.hero.primaryCta}
-            </MagneticButton>
-            <MagneticButton
-              variant="secondary"
-              cursorLabel="View"
-              onClick={() =>
-                document
-                  .querySelector("#portfolio")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
-              {LANDING.hero.secondaryCta}
-            </MagneticButton>
-          </div>
+          <HeroCtas />
 
           {heroStats.length > 0 ? (
             <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -85,7 +60,7 @@ export function HeroSection({ about, stats }: HeroSectionProps) {
           ) : null}
         </div>
 
-        <HeroGlobe />
+        <DeferredHeroGlobe />
       </div>
     </section>
   );

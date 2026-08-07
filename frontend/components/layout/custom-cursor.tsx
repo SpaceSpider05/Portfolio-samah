@@ -67,9 +67,15 @@ export function CustomCursor() {
       }
 
       if (ringRef.current) {
-        const scale = pressed ? (hasLabel ? 0.9 : 0.75) : 1;
+        // Base ring is 32px; labeled state visually ~80px via scale(2.5).
+        const labelScale = hasLabel ? 2.5 : 1;
+        const pressScale = pressed ? (hasLabel ? 0.9 : 0.75) : 1;
+        const scale = labelScale * pressScale;
         ringRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(${scale})`;
         ringRef.current.style.opacity = hidden ? "0" : "1";
+        ringRef.current.style.backgroundColor = hasLabel
+          ? "color-mix(in oklab, var(--rose-400) 25%, transparent)"
+          : "transparent";
       }
     };
 
@@ -135,9 +141,14 @@ export function CustomCursor() {
       }
 
       if (ringRef.current) {
-        const scale = pressed ? (hasLabel ? 0.9 : 0.75) : 1;
+        const labelScale = hasLabel ? 2.5 : 1;
+        const pressScale = pressed ? (hasLabel ? 0.9 : 0.75) : 1;
+        const scale = labelScale * pressScale;
         ringRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(${scale})`;
         ringRef.current.style.opacity = hidden ? "0" : "1";
+        ringRef.current.style.backgroundColor = hasLabel
+          ? "color-mix(in oklab, var(--rose-400) 25%, transparent)"
+          : "transparent";
       }
     });
     return () => window.cancelAnimationFrame(id);
@@ -160,19 +171,24 @@ export function CustomCursor() {
     <>
       <div
         ref={dotRef}
-        className="pointer-events-none fixed left-0 top-0 z-[100] h-2 w-2 rounded-full bg-rose-400 opacity-0 shadow-[0_0_18px_6px_color-mix(in_oklab,var(--rose-400)_55%,transparent)] will-change-transform"
+        className="pointer-events-none fixed top-0 left-0 z-[100] h-2 w-2 rounded-full bg-rose-400 opacity-0 shadow-[0_0_18px_6px_color-mix(in_oklab,var(--rose-400)_55%,transparent)] will-change-transform"
         style={{ opacity: modalOpen ? 0 : 1 }}
       />
       <div
         ref={ringRef}
         className={cn(
-          "pointer-events-none fixed left-0 top-0 z-[100] flex items-center justify-center rounded-full border border-rose-400/70 text-[10px] font-medium uppercase tracking-[0.2em] text-fantasy-100 opacity-0 will-change-transform",
-          "transition-[width,height,background-color] duration-200",
-          label ? "h-20 w-20 bg-rose-400/25" : "h-8 w-8 bg-transparent",
+          "pointer-events-none fixed top-0 left-0 z-[100] flex h-8 w-8 items-center justify-center rounded-full border border-rose-400/70 text-[10px] font-medium tracking-[0.2em] text-fantasy-100 uppercase opacity-0 will-change-transform",
+          "transition-[background-color] duration-200",
         )}
         style={{ opacity: modalOpen ? 0 : 1 }}
       >
-        {label}
+        {/* Counter-scale text so label stays readable when ring grows */}
+        <span
+          className="will-change-transform"
+          style={{ transform: label ? "scale(0.4)" : "scale(1)" }}
+        >
+          {label}
+        </span>
       </div>
     </>
   );

@@ -149,11 +149,14 @@ export function StatsSection({ stats }: StatsSectionProps) {
                     <div className="relative flex h-40 w-full items-end md:h-44">
                       <div
                         className={cn(
-                          "w-full rounded-t-xl bg-linear-to-t from-rose-500 to-rose-300 shadow-[0_0_24px_color-mix(in_oklab,var(--rose-400)_25%,transparent)] transition-[height,opacity] duration-700 ease-out",
+                          "w-full origin-bottom rounded-t-xl bg-linear-to-t from-rose-500 to-rose-300 shadow-[0_0_24px_color-mix(in_oklab,var(--rose-400)_25%,transparent)] transition-[transform,opacity] duration-700 ease-out will-change-transform",
                           chartInView ? "opacity-100" : "opacity-40",
                         )}
                         style={{
-                          height: chartInView ? `${height}%` : "8%",
+                          height: "100%",
+                          transform: chartInView
+                            ? `scaleY(${height / 100})`
+                            : "scaleY(0.08)",
                           transitionDelay: `${index * 80}ms`,
                         }}
                       />

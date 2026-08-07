@@ -1,5 +1,3 @@
-"use client";
-
 import { LANDING } from "@/constants/landing";
 import { getSkillIcon } from "@/components/landing/skill-tool-icons";
 import { cn } from "@/lib/utils";

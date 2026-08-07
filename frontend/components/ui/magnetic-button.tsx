@@ -36,6 +36,9 @@ export const MagneticButton = forwardRef<HTMLButtonElement, MagneticButtonProps>
     ref,
   ) {
     const localRef = useRef<HTMLButtonElement | null>(null);
+    const rectRef = useRef<DOMRect | null>(null);
+    const rafMoveRef = useRef<number | null>(null);
+    const pendingPoint = useRef<{ x: number; y: number } | null>(null);
     const setCursorLabel = useUiStore((s) => s.setCursorLabel);
 
     const assignRef = (node: HTMLButtonElement | null) => {
@@ -47,21 +50,30 @@ export const MagneticButton = forwardRef<HTMLButtonElement, MagneticButtonProps>
       }
     };
 
+    const applyMagnetic = () => {
+      rafMoveRef.current = null;
+      const el = localRef.current;
+      const point = pendingPoint.current;
+      const rect = rectRef.current;
+      if (!el || !point || !rect) {
+        return;
+      }
+
+      const x = point.x - rect.left - rect.width / 2;
+      const y = point.y - rect.top - rect.height / 2;
+      el.style.transform = `translate3d(${x * 0.22}px, ${y * 0.22}px, 0)`;
+    };
+
     const handleMove = (event: MouseEvent<HTMLButtonElement>) => {
       if (!magnetic || window.matchMedia("(pointer: coarse)").matches) {
         onMouseMove?.(event);
         return;
       }
 
-      const el = localRef.current;
-      if (!el) {
-        return;
+      pendingPoint.current = { x: event.clientX, y: event.clientY };
+      if (rafMoveRef.current === null) {
+        rafMoveRef.current = window.requestAnimationFrame(applyMagnetic);
       }
-
-      const rect = el.getBoundingClientRect();
-      const x = event.clientX - rect.left - rect.width / 2;
-      const y = event.clientY - rect.top - rect.height / 2;
-      el.style.transform = `translate3d(${x * 0.22}px, ${y * 0.22}px, 0)`;
       onMouseMove?.(event);
     };
 
@@ -70,6 +82,12 @@ export const MagneticButton = forwardRef<HTMLButtonElement, MagneticButtonProps>
       if (el) {
         el.style.transform = "translate3d(0, 0, 0)";
       }
+      rectRef.current = null;
+      pendingPoint.current = null;
+      if (rafMoveRef.current !== null) {
+        window.cancelAnimationFrame(rafMoveRef.current);
+        rafMoveRef.current = null;
+      }
       if (manageCursorLabel) {
         setCursorLabel(null);
       }
@@ -77,6 +95,7 @@ export const MagneticButton = forwardRef<HTMLButtonElement, MagneticButtonProps>
     };
 
     const handleEnter = (event: MouseEvent<HTMLButtonElement>) => {
+      rectRef.current = localRef.current?.getBoundingClientRect() ?? null;
       if (manageCursorLabel) {
         setCursorLabel(cursorLabel);
       }
@@ -87,7 +106,7 @@ export const MagneticButton = forwardRef<HTMLButtonElement, MagneticButtonProps>
       <button
         ref={assignRef}
         className={cn(
-          "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-[box-shadow,background-color,color,transform] duration-300 will-change-transform active:scale-[0.97]",
+          "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-[background-color,color,transform] duration-300 will-change-transform active:scale-[0.97]",
           variant === "primary" &&
             "bg-rose-400 text-tobago-800 shadow-[0_10px_30px_color-mix(in_oklab,var(--rose-400)_35%,transparent)] hover:bg-rose-500",
           variant === "secondary" &&

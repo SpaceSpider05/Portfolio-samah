@@ -2,17 +2,17 @@
 
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 let registered = false;
 
 export function registerGsap(): typeof gsap {
   if (!registered && typeof window !== "undefined") {
-    gsap.registerPlugin(useGSAP, ScrollTrigger);
+    // ScrollTrigger is unused on marketing — do not register it.
+    gsap.registerPlugin(useGSAP);
     registered = true;
   }
 
   return gsap;
 }
 
-export { gsap, useGSAP, ScrollTrigger };
+export { gsap, useGSAP };

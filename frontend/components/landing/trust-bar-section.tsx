@@ -1,5 +1,3 @@
-"use client";
-
 import { LANDING } from "@/constants/landing";
 import { TRUST_BRAND_ICONS } from "@/components/landing/trust-brand-icons";
 

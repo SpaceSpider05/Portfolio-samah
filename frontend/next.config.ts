@@ -3,6 +3,7 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   images: {
+    formats: ["image/avif", "image/webp"],
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
@@ -27,7 +28,12 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ["lucide-react", "gsap", "framer-motion"],
+    optimizePackageImports: [
+      "lucide-react",
+      "gsap",
+      "@gsap/react",
+      "framer-motion",
+    ],
   },
   turbopack: {
     root: path.join(__dirname),
