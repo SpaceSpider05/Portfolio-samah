@@ -102,22 +102,25 @@ export const MagneticButton = forwardRef<HTMLButtonElement, MagneticButtonProps>
       onMouseEnter?.(event);
     };
 
+    const isDisabled = Boolean(props.disabled);
+
     return (
       <button
         ref={assignRef}
         className={cn(
-          "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-[background-color,color,transform] duration-300 will-change-transform active:scale-[0.97]",
+          "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-[background-color,color,transform,opacity] duration-300 will-change-transform active:scale-[0.97]",
           variant === "primary" &&
             "bg-rose-400 text-tobago-800 shadow-[0_10px_30px_color-mix(in_oklab,var(--rose-400)_35%,transparent)] hover:bg-rose-500",
           variant === "secondary" &&
             "glass-panel text-foreground hover:border-rose-300",
           variant === "ghost" &&
             "bg-transparent text-fantasy-200 hover:bg-tobago-600/50",
+          isDisabled && "pointer-events-none cursor-not-allowed opacity-60 active:scale-100",
           className,
         )}
-        onMouseMove={handleMove}
-        onMouseLeave={handleLeave}
-        onMouseEnter={handleEnter}
+        onMouseMove={isDisabled ? onMouseMove : handleMove}
+        onMouseLeave={isDisabled ? onMouseLeave : handleLeave}
+        onMouseEnter={isDisabled ? onMouseEnter : handleEnter}
         {...props}
       >
         <span className="pointer-events-none absolute inset-0 bg-black/10 opacity-0 transition-opacity duration-200 group-active:opacity-100" />

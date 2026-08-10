@@ -26,6 +26,7 @@ class StoreBookingRequest extends FormRequest
             'goals' => ['nullable', 'array', 'max:10'],
             'goals.*' => ['string', 'max:120'],
             'scheduledAt' => ['nullable', 'date', 'after:now'],
+            'idempotencyKey' => ['nullable', 'uuid'],
         ];
     }
 

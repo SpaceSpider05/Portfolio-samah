@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -35,12 +35,27 @@ type BookingFormProps = {
 const fieldClass =
   "mt-2 w-full rounded-2xl border border-fantasy-200/15 bg-tobago-800/70 px-4 py-3 text-sm text-fantasy-100 outline-none transition placeholder:text-fantasy-200/35 focus:border-rose-400";
 
+function createIdempotencyKey(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  // RFC4122-ish fallback when randomUUID is unavailable.
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (char) => {
+    const rand = (Math.random() * 16) | 0;
+    const value = char === "x" ? rand : (rand & 0x3) | 0x8;
+    return value.toString(16);
+  });
+}
+
 export function BookingForm({ services }: BookingFormProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const showToast = useUiStore((state) => state.showToast);
   const [serverError, setServerError] = useState<string | null>(null);
   const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
+  const [isLocked, setIsLocked] = useState(false);
+  const submitLockRef = useRef(false);
+  const idempotencyKeyRef = useRef(createIdempotencyKey());
 
   const defaultService = useMemo(() => {
     const slug = searchParams.get("service");
@@ -74,7 +89,15 @@ export function BookingForm({ services }: BookingFormProps) {
     }
   }, [defaultService, reset]);
 
+  const busy = isSubmitting || isLocked;
+
   const onSubmit = handleSubmit(async (values) => {
+    if (submitLockRef.current) {
+      return;
+    }
+
+    submitLockRef.current = true;
+    setIsLocked(true);
     setServerError(null);
 
     try {
@@ -85,6 +108,7 @@ export function BookingForm({ services }: BookingFormProps) {
         service: values.service,
         businessType: values.businessType || undefined,
         notes: values.notes,
+        idempotencyKey: idempotencyKeyRef.current,
       });
 
       setSubmittedEmail(response.email);
@@ -94,7 +118,13 @@ export function BookingForm({ services }: BookingFormProps) {
         message: `Thanks ${values.name.split(" ")[0]}! We’ll reply within one business day.`,
       });
       router.replace("/book?success=1", { scroll: false });
+      // Keep locked after success — success UI replaces the form.
     } catch (error) {
+      submitLockRef.current = false;
+      setIsLocked(false);
+      // New attempt gets a fresh key so a failed request can be retried safely.
+      idempotencyKeyRef.current = createIdempotencyKey();
+
       if (error instanceof ApiError && Object.keys(error.errors).length > 0) {
         Object.entries(error.errors).forEach(([field, messages]) => {
           const message = messages[0];
@@ -118,7 +148,7 @@ export function BookingForm({ services }: BookingFormProps) {
       setServerError(
         error instanceof Error
           ? error.message
-          : "Something went wrong. Please try again.",
+          : "Something went wrong while submitting your booking. Please try again.",
       );
     }
   });
@@ -140,6 +170,9 @@ export function BookingForm({ services }: BookingFormProps) {
             variant="secondary"
             onClick={() => {
               setSubmittedEmail(null);
+              submitLockRef.current = false;
+              setIsLocked(false);
+              idempotencyKeyRef.current = createIdempotencyKey();
               router.replace("/book");
               reset({
                 name: "",
@@ -160,7 +193,13 @@ export function BookingForm({ services }: BookingFormProps) {
 
   return (
     <GlassPanel className="p-6 md:p-10">
-      <form onSubmit={onSubmit} className="space-y-6" noValidate>
+      <form
+        onSubmit={onSubmit}
+        className="space-y-6"
+        noValidate
+        aria-busy={busy}
+      >
+        <fieldset disabled={busy} className="contents">
         <div className="grid gap-6 md:grid-cols-2">
           <label className="block">
             <span className="type-caption text-fantasy-200/80">Full name</span>
@@ -241,9 +280,10 @@ export function BookingForm({ services }: BookingFormProps) {
             <p className="mt-2 text-xs text-rose-300">{errors.notes.message}</p>
           ) : null}
         </label>
+        </fieldset>
 
         {serverError ? (
-          <p className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
+          <p className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200" role="alert">
             {serverError}
           </p>
         ) : null}
@@ -255,8 +295,13 @@ export function BookingForm({ services }: BookingFormProps) {
               {BRAND.email}
             </a>
           </p>
-          <MagneticButton type="submit" disabled={isSubmitting} className="sm:min-w-44">
-            {isSubmitting ? "Sending…" : "Place booking"}
+          <MagneticButton
+            type="submit"
+            disabled={busy}
+            aria-busy={busy}
+            className="sm:min-w-44"
+          >
+            {busy ? "Submitting…" : "Place booking"}
           </MagneticButton>
         </div>
       </form>

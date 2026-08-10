@@ -15,6 +15,8 @@ export type BookingPayload = {
   service: string;
   businessType?: string;
   notes?: string;
+  /** Client-generated UUID; backend rejects duplicate creates for the same key. */
+  idempotencyKey?: string;
 };
 
 export type BookingResponse = {

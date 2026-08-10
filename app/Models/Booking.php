@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
     'status',
     'source',
     'notes',
+    'idempotency_key',
 ])]
 class Booking extends Model
 {

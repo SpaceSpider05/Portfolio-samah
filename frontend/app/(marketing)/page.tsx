@@ -11,7 +11,7 @@ import {
 } from "@/components/landing/lazy-client-section";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { BRAND } from "@/constants/brand";
-import { SEO, absoluteUrl, pageMetadata } from "@/constants/seo";
+import { SEO, absoluteUrl, pageMetadata, resolveSeoPhone } from "@/constants/seo";
 import { getAbout, getProjects, getServices, getSiteSettings, getStats } from "@/services/api";
 
 function SectionSkeleton({ minHeight = "24rem" }: { minHeight?: string }) {
@@ -98,6 +98,75 @@ export default async function HomePage() {
     })
     .slice(0, 3);
 
+  const contactEmail = siteSettings.contactEmail || BRAND.email;
+  const seoPhone = resolveSeoPhone(siteSettings.contactPhone);
+  const personId = `${SEO.siteUrl}/#person`;
+  const organizationId = `${SEO.siteUrl}/#organization`;
+
+  // Person + Organization (not LocalBusiness/ProfessionalService — no public street address).
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": personId,
+    name: BRAND.name,
+    url: SEO.siteUrl,
+    image: absoluteUrl("/opengraph-image"),
+    jobTitle: "Digital Marketing Strategist",
+    description: SEO.description,
+    email: contactEmail,
+    telephone: seoPhone,
+    knowsAbout: [...SEO.knowsAbout],
+    sameAs: [
+      BRAND.socials.linkedin,
+      BRAND.socials.instagram,
+      BRAND.socials.whatsapp,
+      BRAND.socials.telegram,
+    ].filter(Boolean),
+    worksFor: { "@id": organizationId },
+  };
+
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": organizationId,
+    name: BRAND.name,
+    alternateName: "Grow with Samah",
+    url: SEO.siteUrl,
+    email: contactEmail,
+    telephone: seoPhone,
+    description: SEO.description,
+    image: absoluteUrl("/opengraph-image"),
+    areaServed: "Worldwide",
+    knowsAbout: [...SEO.knowsAbout],
+    sameAs: [
+      BRAND.socials.linkedin,
+      BRAND.socials.instagram,
+      BRAND.socials.whatsapp,
+      BRAND.socials.telegram,
+    ].filter(Boolean),
+    founder: { "@id": personId },
+    employee: { "@id": personId },
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "sales",
+      email: contactEmail,
+      telephone: seoPhone,
+      availableLanguage: ["English", "French", "Arabic"],
+    },
+  };
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SEO.siteUrl}/#website`,
+    name: BRAND.name,
+    alternateName: "Grow with Samah",
+    url: SEO.siteUrl,
+    description: SEO.description,
+    inLanguage: "en",
+    publisher: { "@id": organizationId },
+  };
+
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -122,11 +191,7 @@ export default async function HomePage() {
         "@type": "Service",
         name: service.title,
         description: service.description,
-        provider: {
-          "@type": "Person",
-          name: BRAND.name,
-          url: SEO.siteUrl,
-        },
+        provider: { "@id": personId },
         areaServed: "Worldwide",
         url: absoluteUrl("/#services"),
       },
@@ -135,6 +200,18 @@ export default async function HomePage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}

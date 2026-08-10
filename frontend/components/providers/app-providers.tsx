@@ -90,6 +90,8 @@ function DeferredChrome() {
 export function AppProviders({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isHome = pathname === "/";
+  // Conversion pages: skip Lenis so the form becomes interactive sooner.
+  const enableSmoothScroll = pathname !== "/book" && pathname !== "/privacy";
   const setIntroComplete = useUiStore((s) => s.setIntroComplete);
   const [showIntro, setShowIntro] = useState(false);
 
@@ -112,7 +114,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
   }, [isHome, setIntroComplete]);
 
   return (
-    <SmoothScrollProvider>
+    <SmoothScrollProvider enabled={enableSmoothScroll}>
       <SiteBackground lite={!isHome} />
       {showIntro ? <IntroAnimation /> : null}
       <CursorModeSync />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { BRAND } from "@/constants/brand";
 import { createBooking } from "@/services/api";
 import { useUiStore } from "@/stores/ui-store";
@@ -11,6 +11,17 @@ type ContactSectionProps = {
 
 const fieldClass =
   "mt-2 w-full rounded-2xl border border-fantasy-200/15 bg-tobago-800/70 px-4 py-3 text-sm text-fantasy-100 outline-none transition placeholder:text-fantasy-200/35 focus:border-rose-400";
+
+function createIdempotencyKey(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (char) => {
+    const rand = (Math.random() * 16) | 0;
+    const value = char === "x" ? rand : (rand & 0x3) | 0x8;
+    return value.toString(16);
+  });
+}
 
 export function ContactSection({
   contactEmail = BRAND.email,
@@ -24,9 +35,16 @@ export function ContactSection({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const submitLockRef = useRef(false);
+  const idempotencyKeyRef = useRef(createIdempotencyKey());
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    if (submitLockRef.current || saving) {
+      return;
+    }
+
+    submitLockRef.current = true;
     setSaving(true);
     setError(null);
 
@@ -38,6 +56,7 @@ export function ContactSection({
         service: "Marketing Consultation",
         businessType: company || undefined,
         notes: message,
+        idempotencyKey: idempotencyKeyRef.current,
       });
       setDone(true);
       showToast({
@@ -50,10 +69,12 @@ export function ContactSection({
       setCompany("");
       setPhone("");
       setMessage("");
+      // Keep locked after success — done UI replaces the form.
     } catch {
-      setError("Could not send your message. Please try again or email directly.");
-    } finally {
+      submitLockRef.current = false;
       setSaving(false);
+      idempotencyKeyRef.current = createIdempotencyKey();
+      setError("Could not send your message. Please try again or email directly.");
     }
   };
 
@@ -96,14 +117,15 @@ export function ContactSection({
           </ul>
         </div>
 
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={onSubmit} className="space-y-4" aria-busy={saving}>
           {done ? (
             <p className="rounded-2xl border border-silver-400/25 bg-tobago-800/40 px-4 py-5 text-sm text-fantasy-100">
               Message sent. I’ll get back to you shortly.
             </p>
-          ) : null}
+          ) : (
+            <>
           {error ? (
-            <p className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
+            <p className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200" role="alert">
               {error}
             </p>
           ) : null}
@@ -116,6 +138,7 @@ export function ContactSection({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className={fieldClass}
+                disabled={saving}
               />
             </label>
             <label className="block text-sm">
@@ -126,6 +149,7 @@ export function ContactSection({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={fieldClass}
+                disabled={saving}
               />
             </label>
           </div>
@@ -137,6 +161,7 @@ export function ContactSection({
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
                 className={fieldClass}
+                disabled={saving}
               />
             </label>
             <label className="block text-sm">
@@ -146,6 +171,7 @@ export function ContactSection({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className={fieldClass}
+                disabled={saving}
               />
             </label>
           </div>
@@ -160,16 +186,19 @@ export function ContactSection({
               onChange={(e) => setMessage(e.target.value)}
               className={`${fieldClass} resize-y`}
               placeholder="Tell me about your goals..."
+              disabled={saving}
             />
           </label>
 
           <button
             type="submit"
             disabled={saving}
-            className="rounded-full bg-rose-400 px-6 py-3 text-sm font-medium text-tobago-900 transition hover:bg-rose-300 disabled:opacity-60"
+            className="rounded-full bg-rose-400 px-6 py-3 text-sm font-medium text-tobago-900 transition hover:bg-rose-300 disabled:opacity-60 disabled:pointer-events-none"
           >
-            {saving ? "Sending…" : "Send message"}
+            {saving ? "Submitting…" : "Send message"}
           </button>
+            </>
+          )}
         </form>
       </div>
     </section>
