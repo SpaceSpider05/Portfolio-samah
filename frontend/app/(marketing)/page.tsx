@@ -103,7 +103,8 @@ export default async function HomePage() {
   const personId = `${SEO.siteUrl}/#person`;
   const organizationId = `${SEO.siteUrl}/#organization`;
 
-  // Person + Organization (not LocalBusiness/ProfessionalService — no public street address).
+  // Online-only brand: Organization (+ OnlineBusiness). Never LocalBusiness /
+  // ProfessionalService — those require a public address we do not publish.
   const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -127,7 +128,7 @@ export default async function HomePage() {
 
   const organizationJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": ["Organization", "OnlineBusiness"],
     "@id": organizationId,
     name: BRAND.name,
     alternateName: "Grow with Samah",
@@ -136,6 +137,7 @@ export default async function HomePage() {
     telephone: seoPhone,
     description: SEO.description,
     image: absoluteUrl("/opengraph-image"),
+    logo: absoluteUrl("/opengraph-image"),
     areaServed: "Worldwide",
     knowsAbout: [...SEO.knowsAbout],
     sameAs: [
@@ -152,6 +154,7 @@ export default async function HomePage() {
       email: contactEmail,
       telephone: seoPhone,
       availableLanguage: ["English", "French", "Arabic"],
+      areaServed: "Worldwide",
     },
   };
 
