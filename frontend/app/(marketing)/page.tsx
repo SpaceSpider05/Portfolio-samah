@@ -101,15 +101,16 @@ export default async function HomePage() {
   const contactEmail = siteSettings.contactEmail || BRAND.email;
   const seoPhone = resolveSeoPhone(siteSettings.contactPhone);
   const personId = `${SEO.siteUrl}/#person`;
-  const organizationId = `${SEO.siteUrl}/#organization`;
 
-  // Online-only brand: Organization (+ OnlineBusiness). Never LocalBusiness /
-  // ProfessionalService — those require a public address we do not publish.
+  // Freelance / 100% online: Person is the primary entity.
+  // Do not emit Organization/LocalBusiness/OnlineBusiness — Google recommends
+  // `address` for those types and would warn without a public street address.
   const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
     "@id": personId,
     name: BRAND.name,
+    alternateName: "Grow with Samah",
     url: SEO.siteUrl,
     image: absoluteUrl("/opengraph-image"),
     jobTitle: "Digital Marketing Strategist",
@@ -123,51 +124,19 @@ export default async function HomePage() {
       BRAND.socials.whatsapp,
       BRAND.socials.telegram,
     ].filter(Boolean),
-    worksFor: { "@id": organizationId },
-  };
-
-  const organizationJsonLd = {
-    "@context": "https://schema.org",
-    "@type": ["Organization", "OnlineBusiness"],
-    "@id": organizationId,
-    name: BRAND.name,
-    alternateName: "Grow with Samah",
-    url: SEO.siteUrl,
-    email: contactEmail,
-    telephone: seoPhone,
-    description: SEO.description,
-    image: absoluteUrl("/opengraph-image"),
-    logo: absoluteUrl("/opengraph-image"),
-    areaServed: "Worldwide",
-    knowsAbout: [...SEO.knowsAbout],
-    sameAs: [
-      BRAND.socials.linkedin,
-      BRAND.socials.instagram,
-      BRAND.socials.whatsapp,
-      BRAND.socials.telegram,
-    ].filter(Boolean),
-    founder: { "@id": personId },
-    employee: { "@id": personId },
-    contactPoint: {
-      "@type": "ContactPoint",
-      contactType: "sales",
-      email: contactEmail,
-      telephone: seoPhone,
-      availableLanguage: ["English", "French", "Arabic"],
-      areaServed: "Worldwide",
-    },
   };
 
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${SEO.siteUrl}/#website`,
-    name: BRAND.name,
-    alternateName: "Grow with Samah",
+    name: "Grow with Samah",
+    alternateName: BRAND.name,
     url: SEO.siteUrl,
     description: SEO.description,
     inLanguage: "en",
-    publisher: { "@id": organizationId },
+    publisher: { "@id": personId },
+    about: { "@id": personId },
   };
 
   const faqJsonLd = {
@@ -206,10 +175,6 @@ export default async function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
       <script
         type="application/ld+json"
